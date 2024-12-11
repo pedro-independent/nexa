@@ -3,6 +3,27 @@ window.onbeforeunload = function () {
     window.scrollTo(0, 0);
   };
 
+/* SOUNDS */
+  // Preload sound files
+  const hoverSound = new Audio("URL_OF_YOUR_HOVER_SOUND_FILE");
+  const clickSound = new Audio("URL_OF_YOUR_CLICK_SOUND_FILE");
+
+  // Add event listeners for hover and click
+  document.querySelectorAll('.hover-element').forEach((element) => {
+    element.addEventListener('mouseenter', () => {
+      hoverSound.currentTime = 0; // Reset sound to the start
+      hoverSound.play();
+    });
+  });
+
+  document.querySelectorAll('.click-element').forEach((element) => {
+    element.addEventListener('click', () => {
+      clickSound.currentTime = 0; // Reset sound to the start
+      clickSound.play();
+    });
+  });
+
+
 gsap.registerPlugin(ScrollTrigger);
 
 /* Homepage Hero Animation */
@@ -31,24 +52,6 @@ heroImage.to(".home-hero-wrapper", {
 
 /* Homepage Social Proof Horizontal Scroll */
 
-// let scrollTrack = gsap.to(".menu-track", {
-//     scrollTrigger: {
-//         trigger:".menu-wrap",
-//         start:"top 5%",
-//         end: "bottom 5%",
-//         scrub: true,
-//         invalidateOnRefresh:true,
-//         //markers:true,
-//         onUpdate: (self) => {
-//                     gsap.to(".menu-track", {
-//                         x: `${-200 * self.progress}vw`,
-//                         duration: 0.5,
-//                         ease: "power3.out"
-//                      })
-//             }
-//     }
-// })
-
 let socialHeading = document.querySelectorAll(".social-proof-h3");
 
 let scrollTrack = gsap.to(".menu-track", {
@@ -63,21 +66,27 @@ let scrollTrack = gsap.to(".menu-track", {
     },
   });
 
-//   socialHeading.forEach((item) => {
-//     gsap.to(item, {
-//         ease: "none",
-//         fontSize: "17em",
-//         stagger: 0.7,
-//       scrollTrigger: {
-//         trigger: item.closest(".social-proof-item"),
-//         containerAnimation: scrollTrack,
-//         start: "left center",
-//         end: "right center",
-//         scrub: 1,
-//         markers: true,
-//       },
-//     });
-//   });
+  socialHeading.forEach((item) => {
+    gsap.fromTo(
+      item,
+      {
+        fontSize: "10em", // Set the initial fontSize or other properties you want to animate from
+      },
+      {
+        fontSize: "17em", // Set the final fontSize or other properties you want to animate to
+        ease: "none",
+        stagger: 0.7,
+        scrollTrigger: {
+          trigger: item.closest(".social-proof-item"),
+          containerAnimation: scrollTrack,
+          start: "left center",
+          end: "right center",
+          scrub: 1,
+          markers: true,
+        },
+      }
+    );
+  });
 
 gsap.fromTo(
     socialHeading,
@@ -107,7 +116,7 @@ const getY = (element) => {
     const height = element.clientHeight;
     const maxScrollSpeed = -300; // Negative maximum scroll speed for smallest images
     const minScrollSpeed = -10; // Negative minimum scroll speed for largest images
-    const referenceHeight = 1000; // Reference height for scaling
+    const referenceHeight = 600; // Reference height for scaling
   
     // Adjust speed factor based on the height relative to the reference height
     const speedFactor =
@@ -221,10 +230,14 @@ items.forEach((item, index) => {
 
 gsap.to(".quick-item", {
     y: "3em",
-    ease: "power2.out",
+    duration: 0.5,
+    stagger: 0.1,
+    ease: "power2.inOut",
     scrollTrigger: {
         trigger: ".section_quick-links",
-        start: "top top",
-        markers: true,
+        start: "top 35%",
+        end: "bottom 35%",
+        //markers: true,
+        toggleActions: "play reverse play reverse"
     }
-})
+});
