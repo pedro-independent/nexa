@@ -58,7 +58,7 @@ let scrollTrack = gsap.to(".menu-track", {
       trigger: ".menu-track",
       //pin: true,
       scrub: true,
-      start: "center center",
+      start: "center 25%",
       end: "+=3500",
     },
   });
@@ -79,17 +79,152 @@ let scrollTrack = gsap.to(".menu-track", {
 //     });
 //   });
 
-gsap.to(socialHeading, {
-    ease: "none",
-    fontSize: "17em",
-    stagger: 0.2,
-    scrollTrigger: {
-      trigger: ".social-proof-wrap",
-      containerAnimation: scrollTrack,
-      start: "left 25%",
-      end: "right center",
-      scrub: 1,
-      //markers: true,
+gsap.fromTo(
+    socialHeading,
+    {
+      fontSize: "3.125em",
     },
-  });
+    {
+      fontSize: "17em",
+      ease: "none",
+      stagger: 0.2,
+      scrollTrigger: {
+        trigger: ".social-proof-wrap",
+        containerAnimation: scrollTrack,
+        start: "left 25%",
+        end: "right center",
+        scrub: 1,
+        //markers: true,
+      },
+    }
+  );
   
+  
+/* Home About Images Parallax */
+
+// Function to get y translation based on image height
+const getY = (element) => {
+    const height = element.clientHeight;
+    const maxScrollSpeed = -300; // Negative maximum scroll speed for smallest images
+    const minScrollSpeed = -10; // Negative minimum scroll speed for largest images
+    const referenceHeight = 1000; // Reference height for scaling
+  
+    // Adjust speed factor based on the height relative to the reference height
+    const speedFactor =
+      maxScrollSpeed +
+      (height / referenceHeight) * (minScrollSpeed - maxScrollSpeed);
+    console.log({ height, speedFactor });
+    return speedFactor;
+  };
+  
+  document.querySelectorAll(".home-about-parallax-wrap").forEach((homeAboutImage) => {
+    gsap.to(homeAboutImage, {
+      y: getY(homeAboutImage),
+      ease: "none",
+      scrollTrigger: {
+        trigger: homeAboutImage,
+        start: "top bottom",
+        end: "bottom top",
+        scrub: 1.2,
+      },
+      onComplete: () => ScrollTrigger.refresh(),
+    });
+  });
+
+/* Parallax animation for About Image */
+gsap.to(".home-about-img", {
+    yPercent: 10,
+    ease: "none",
+    scrollTrigger: {
+    trigger: ".home-about-img-wrap",
+    start: "top 60%",
+    end: "bottom 60%",
+    scrub: true,
+    //markers: true,
+    },
+    onComplete: () => ScrollTrigger.refresh(),
+});
+
+/* Values Scroll Animation */
+
+gsap.set(".home-values-item-sub-wrap", {
+    height: 0,
+    opacity: 0,
+    margin: 0,
+});
+
+let homeValues = gsap.timeline({
+    scrollTrigger: {
+        trigger: ".section_home-values",
+        start: "top top",
+        end: "bottom top",
+        scrub: true,
+        pin: true,
+        //markers: true,
+    },
+});
+
+const items = document.querySelectorAll(".home-values-item-wrap");
+const subItems = document.querySelectorAll(".home-values-item-sub-wrap");
+const headers = document.querySelectorAll(".values-h3");
+
+items.forEach((item, index) => {
+    // Close the previous sub-wrap and reset its color
+    if (index > 0) {
+        homeValues.to(subItems[index - 1], {
+            height: 0,
+            opacity: 0,
+            marginTop: 0,
+            duration: 1,
+            ease: "power2.inOut",
+        }, ">"); // Starts when the next one begins opening
+
+        homeValues.to(items[index - 1], {
+            color: "#03020C", // Replace with your default color
+            duration: 0.5,
+            ease: "power2.out",
+        }, "<"); // Aligns with the start of the closing animation
+
+        homeValues.to(headers[index - 1], {
+            color: "#03020C", // Replace with your default color
+            duration: 0.5,
+            ease: "power2.out",
+        }, "<"); // Aligns with the item color reset
+    }
+
+    // Change the color of the current header
+    homeValues.to(headers[index], {
+        color: "#C85204",
+        duration: 0.5,
+        ease: "power2.out",
+    }, "<"); // Aligns with the start of the previous close animation
+
+    // Change the color of the current item
+    homeValues.to(item, {
+        color: "#C85204",
+        duration: 0.5,
+        ease: "power2.out",
+    }, "<"); // Aligns with the header color change
+
+    // Open the current sub-wrap
+    homeValues.to(subItems[index], {
+        height: "auto",
+        opacity: 1,
+        marginTop: "2em",
+        duration: 1,
+        ease: "power2.inOut",
+        onComplete: () => ScrollTrigger.refresh(),
+    }, "<"); // Overlaps with the closing animation of the previous sub-wrap
+});
+
+/* Quick Links Reveal */
+
+gsap.to(".quick-item", {
+    y: "3em",
+    ease: "power2.out",
+    scrollTrigger: {
+        trigger: ".section_quick-links",
+        start: "top top",
+        markers: true,
+    }
+})
