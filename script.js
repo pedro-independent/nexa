@@ -369,3 +369,35 @@ gsap.to(".quick-item", {
 //     }
 //   }
 // );
+
+
+/* Hovers */
+
+// // Wait for Webflow to load the page before running the script
+// Webflow.push(function () {
+//   // Check if the viewport width is 991px or greater
+//   if (window.innerWidth >= 991) {
+//     // Select all elements that have the custom attribute 'data-animate="hover-text"'
+//     const animatedElements = document.querySelectorAll(
+//       '[data-animate="hover-text"]'
+//     );
+
+//     // Loop through each element to apply SplitType and GSAP animations
+//     animatedElements.forEach((element) => {
+//       const splitText = new SplitType(element, { types: "chars" });
+
+//       // Hover event listener for each element
+//       element.addEventListener("mouseenter", () => {
+//         gsap.set(splitText.chars, { y: "0" });
+//         gsap.to(splitText.chars, {
+//           y: "-1em",
+//           stagger: {
+//             amount: 0.2,
+//           },
+//           duration: 0.25,
+//           ease: "power2.out",
+//         });
+//       });
+//     });
+//   }
+// });
