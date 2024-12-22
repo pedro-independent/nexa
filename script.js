@@ -1,10 +1,12 @@
+/* ------------- ALL -------------- */
+const page = document.body.dataset.page;
+
 /* GO BACK TO TOP ON REFRESH */
 window.onbeforeunload = function () {
   window.scrollTo(0, 0);
 };
 
 /* SOUNDS */
-
 // Function to load Base64-encoded audio from a URL
 async function fetchBase64(url) {
   const response = await fetch(url);
@@ -50,6 +52,149 @@ let hoverSound, clickSound;
   }
 })();
 
+/* Menu Open */
+
+const menuBtn = document.querySelector('.menu-btn');
+const navBg = document.querySelector('.nav-bg');
+const navFill = document.querySelector('.nav-fill');
+const navbar = document.querySelector('.navbar');
+
+let menuOpen = false;
+
+menuBtn.addEventListener('click', () => {
+  if (!menuOpen) {
+    navBg.style.display = 'block';
+    gsap.to(navFill, {
+      y: '0%',
+      duration: 0.6,
+      ease: 'power2.out',
+      onStart: () => {
+        navbar.style.mixBlendMode = 'normal';
+      },
+      onComplete: () => {
+        menuOpen = true;
+      }
+    });
+  } else {
+    gsap.to(navFill, {
+      y: '-100%',
+      duration: 0.6,
+      ease: 'power2.in',
+      onComplete: () => {
+        navBg.style.display = 'none';
+        navbar.style.mixBlendMode = 'difference';
+        menuOpen = false;
+      }
+    });
+  }
+});
+
+
+/* Buttons Hover */
+
+let splitText;
+function runSplit() {
+  splitText = new SplitType("[stagger-link]", {
+    types: "words, chars"
+  });
+}
+runSplit();
+
+// ————— Update on window resize
+let windowWidth = $(window).innerWidth();
+window.addEventListener("resize", function () {
+  if (windowWidth !== $(window).innerWidth()) {
+    windowWidth = $(window).innerWidth();
+    splitText.revert();
+    runSplit();
+  }
+});
+
+// ———— animation
+const staggerLinks = document.querySelectorAll("[stagger-link]");
+staggerLinks.forEach((link) => {
+  const letters = link.querySelectorAll("[stagger-link-text] .word");
+  link.addEventListener("mouseenter", function () {
+    gsap.to(letters, {
+      yPercent: -130,
+      duration: 0.5,
+      ease: "power4.inOut",
+      stagger: { each: 0.05, from: "start" },
+      overwrite: true
+    });
+  });
+  link.addEventListener("mouseleave", function () {
+    gsap.to(letters, {
+      yPercent: 0,
+      duration: 0.4,
+      ease: "power4.inOut",
+      stagger: { each: 0.05, from: "end" }
+    });
+  });
+});
+
+gsap.registerPlugin(ScrollTrigger);
+
+/* Scroll Indicator */
+const indicator = document.querySelector(".scroll-indicator-span");
+
+ScrollTrigger.create({
+  trigger: document.body,
+  start: "top top",
+  end: "bottom bottom",
+  ease: "power2.out",
+  onUpdate: (self) => {
+    const progress = Math.round(self.progress * 100);
+    indicator.textContent = `${progress}%`;
+  }
+});
+
+/* Parallax Images */
+document.querySelectorAll("[data-parallax-container]").forEach((container) => {
+  const image = container.querySelector("[data-parallax-img]");
+  
+  if (image) {
+    const containerHeight = container.offsetHeight;
+    const imageHeight = image.offsetHeight;
+    const heightDifference = imageHeight - containerHeight;
+
+    // Apply the parallax effect
+    gsap.to(image, {
+      y: -heightDifference,
+      ease: "none",
+      scrollTrigger: {
+        trigger: container,
+        start: "top bottom",
+        end: "bottom top",
+        scrub: true,
+      },
+    });
+  }
+});
+
+
+/* Quick Links Reveal */
+
+gsap.to(".quick-item", {
+  y: "3em",
+  duration: 0.3,
+  stagger: 0.1,
+  ease: "power2.in",
+  scrollTrigger: {
+    trigger: ".section_quick-links",
+    start: "top 75%",
+    end: "bottom 75%",
+    onComplete: () => ScrollTrigger.refresh(),
+    //markers: true,
+    //toggleActions: "play reverse play reverse",
+  },
+});
+
+/* ------------- END OF ALL -------------- */
+
+/* ------------- HOME -------------- */
+if (page === "home") {
+
 gsap.registerPlugin(ScrollTrigger);
 
 /* Homepage Hero Animation */
@@ -80,59 +225,58 @@ heroImage.to(
   "-=3"
 );
 
-heroImage.to(
-  ".nav-link",
-  {
-    color: "#03020C",
-    duration: 1,
-  },
-  "<"
-);
+// heroImage.to(
+//   ".nav-link",
+//   {
+//     color: "#03020C",
+//     duration: 1,
+//   },
+//   "<"
+// );
 
-heroImage.to(
-  ".logo-svg",
-  {
-    color: "#03020C",
-    duration: 1,
-  },
-  "<"
-);
-heroImage.to(
-  ".menu-btn",
-  {
-    color: "#03020C",
-    duration: 1,
-  },
-  "<"
-);
-heroImage.to(
-  ".sound-icon",
-  {
-    color: "#03020C",
-    duration: 1,
-  },
-  "<"
-);
+// heroImage.to(
+//   ".logo-svg",
+//   {
+//     color: "#03020C",
+//     duration: 1,
+//   },
+//   "<"
+// );
+// heroImage.to(
+//   ".menu-btn",
+//   {
+//     color: "#03020C",
+//     duration: 1,
+//   },
+//   "<"
+// );
+// heroImage.to(
+//   ".sound-icon",
+//   {
+//     color: "#03020C",
+//     duration: 1,
+//   },
+//   "<"
+// );
 
-heroImage.to(
-  ".menu-btn",
-  {
-    borderColor: "#03020C",
-    duration: 1,
-  },
-  "<"
-);
+// heroImage.to(
+//   ".menu-btn",
+//   {
+//     borderColor: "#03020C",
+//     duration: 1,
+//   },
+//   "<"
+// );
 
-heroImage.to(
-  ".sound-btn",
-  {
-    borderColor: "#03020C",
-    duration: 1,
-  },
-  "<"
-);
+// heroImage.to(
+//   ".sound-btn",
+//   {
+//     borderColor: "#03020C",
+//     duration: 1,
+//   },
+//   "<"
+// );
 
-/* Menu on scroll color change */
 
 /* Homepage Social Proof Horizontal Scroll */
 
@@ -220,29 +364,7 @@ document
     });
   });
 
-/* Parallax animation for About Image */
-
-const container = document.querySelector(".home-about-img-wrap");
-const image = document.querySelector(".home-about-img");
-
-const containerHeight = container.offsetHeight;
-const imageHeight = image.offsetHeight;
-const heightDifference = imageHeight - containerHeight;
-
-// console.log('Height Difference:', heightDifference);
-
-gsap.to(image, {
-  y: -heightDifference,
-  ease: "none",
-  scrollTrigger: {
-    trigger: container,
-    start: "top bottom",
-    end: "bottom top",
-    scrub: true,
-  },
-});
-
-/* Values Scroll Animation */
+  /* Values Scroll Animation */
 
 gsap.set(".home-values-item-sub-wrap", {
   height: 0,
@@ -338,66 +460,63 @@ items.forEach((item, index) => {
   ); // Overlaps with the closing animation of the previous sub-wrap
 });
 
-/* Quick Links Reveal */
+}
 
-gsap.to(".quick-item", {
-  y: "3em",
-  duration: 0.3,
-  stagger: 0.1,
-  ease: "power2.out",
-  scrollTrigger: {
-    trigger: ".section_quick-links",
-    start: "top 35%",
-    end: "bottom 35%",
-    //markers: true,
-    //toggleActions: "play reverse play reverse",
-  },
+/* ------------- END OF ALL -------------- */
+
+/* ------------- ABOUT -------------- */
+
+if (page === "about") {
+
+gsap.registerPlugin(ScrollTrigger);
+
+/* Team */
+document.querySelectorAll(".team-item").forEach((card) => {
+  card.addEventListener("mouseenter", () => {
+
+    gsap.to(card.querySelector(".team-item-wrap"), {
+      height: "100%",
+      backgroundColor: "#B44A04",
+      color: "#FAFAFA",
+      duration: 0.5,
+      ease: "power3.out",
+    });
+
+    gsap.to(card.querySelector(".team-bio"), {
+      opacity: 1,
+      color: "#FAFAFA",
+      duration: 0.5,
+      ease: "power3.out",
+    });
+  });
+
+  card.addEventListener("mouseleave", () => {
+
+    gsap.to(card.querySelector(".team-item-wrap"), {
+      height: "6em",
+      backgroundColor: "#E1E1E2",
+      color: "#03020C",
+      duration: 0.5,
+      ease: "power3.in",
+    });
+
+    gsap.to(card.querySelector(".team-bio"), {
+      opacity: 0,
+      color: "#03020C",
+      duration: 0.5,
+      ease: "power3.in",
+    });
+  });
 });
 
-/* Footer Logo Reveal */
+}
 
-// gsap.set(".footer-logo", {y: "12em"});
+/* ------------- END OF ABOUT -------------- */
 
-// gsap.to(".footer-logo",
-//   {
-//     y: "0",
-//     scrollTrigger: {
-//       trigger: ".footer",
-//       start: "top 35%",
-//       end: "top 35%",
-//       markers: true,
-//     }
-//   }
-// );
+/* ------------- CAREERS -------------- */
+
+if (page === "careers") {
 
 
-/* Hovers */
 
-// // Wait for Webflow to load the page before running the script
-// Webflow.push(function () {
-//   // Check if the viewport width is 991px or greater
-//   if (window.innerWidth >= 991) {
-//     // Select all elements that have the custom attribute 'data-animate="hover-text"'
-//     const animatedElements = document.querySelectorAll(
-//       '[data-animate="hover-text"]'
-//     );
-
-//     // Loop through each element to apply SplitType and GSAP animations
-//     animatedElements.forEach((element) => {
-//       const splitText = new SplitType(element, { types: "chars" });
-
-//       // Hover event listener for each element
-//       element.addEventListener("mouseenter", () => {
-//         gsap.set(splitText.chars, { y: "0" });
-//         gsap.to(splitText.chars, {
-//           y: "-1em",
-//           stagger: {
-//             amount: 0.2,
-//           },
-//           duration: 0.25,
-//           ease: "power2.out",
-//         });
-//       });
-//     });
-//   }
-// });
+}
