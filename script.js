@@ -6,6 +6,7 @@ window.onbeforeunload = function () {
   window.scrollTo(0, 0);
 };
 
+
 /* SOUNDS */
 // Function to load Base64-encoded audio from a URL
 async function fetchBase64(url) {
@@ -25,7 +26,7 @@ let hoverSound, clickSound;
     const hoverSoundUrl =
       "https://cdn.prod.website-files.com/6756dbc5ed5ad48503f2c85a/6777d580f0bc14516e1541fc_hover-sound.txt";
     const clickSoundUrl =
-      "https://cdn.prod.website-files.com/6756dbc5ed5ad48503f2c85a/675c460b9f9df14b91bcaade_click.txt";
+      "";
 
     const hoverBase64 = await fetchBase64(hoverSoundUrl);
     const clickBase64 = await fetchBase64(clickSoundUrl);
@@ -516,6 +517,47 @@ document.querySelectorAll(".team-item").forEach((card) => {
 /* ------------- CAREERS -------------- */
 
 if (page === "careers") {
+
+
+
+}
+
+/* ------------- END OF CAREERS -------------- */
+
+/* ------------- FUNDS -------------- */
+if (page === "funds") {
+  
+  let fundsTl = gsap.timeline({
+    scrollTrigger: {
+      trigger: ".section_funds",
+      start: "top top",
+      end: "bottom top",
+      scrub: true,
+      //pin: true,
+      markers: true,
+    }
+  });
+  
+  // Animate each item
+  gsap.utils.toArray('.funds-item').forEach((item, index) => {
+    let itemTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: item,
+        start: "top center",
+        end: "bottom center",
+        scrub: true,
+        //pin: true,
+      }
+    });
+  
+    itemTl.to(item, {
+      scale: 0.9,
+      opacity: 0.5,
+      duration: 1,
+      ease: "power1.out",
+    });
+  });
+  
 
 
 
