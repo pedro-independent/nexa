@@ -23,7 +23,7 @@ let hoverSound, clickSound;
   try {
     // Replace these URLs with the URLs of your .txt files on Webflow
     const hoverSoundUrl =
-      "https://cdn.prod.website-files.com/6756dbc5ed5ad48503f2c85a/675c5386dd0b1d91f2ad9cae_hover-sound.txt";
+      "https://cdn.prod.website-files.com/6756dbc5ed5ad48503f2c85a/6777d580f0bc14516e1541fc_hover-sound.txt";
     const clickSoundUrl =
       "https://cdn.prod.website-files.com/6756dbc5ed5ad48503f2c85a/675c460b9f9df14b91bcaade_click.txt";
 
