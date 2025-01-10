@@ -26,7 +26,7 @@ let hoverSound, clickSound;
     const hoverSoundUrl =
       "https://cdn.prod.website-files.com/6756dbc5ed5ad48503f2c85a/6777d580f0bc14516e1541fc_hover-sound.txt";
     const clickSoundUrl =
-      "";
+      "https://cdn.prod.website-files.com/6756dbc5ed5ad48503f2c85a/678153d4aada1967690f015e_click.txt";
 
     const hoverBase64 = await fetchBase64(hoverSoundUrl);
     const clickBase64 = await fetchBase64(clickSoundUrl);
@@ -365,7 +365,7 @@ document
     });
   });
 
-  /* Values Scroll Animation */
+/* Values Scroll Animation */
 
 gsap.set(".home-values-item-sub-wrap", {
   height: 0,
@@ -534,7 +534,7 @@ if (page === "funds") {
       end: "bottom top",
       scrub: true,
       //pin: true,
-      markers: true,
+      //markers: true,
     }
   });
   
@@ -557,8 +557,111 @@ if (page === "funds") {
       ease: "power1.out",
     });
   });
-  
-
 
 
 }
+/* ------------- END OF FUNDS -------------- */
+
+/* ------------- CAREERS -------------- */
+
+if (page === "sustainability") {
+
+/* Sustainability Values Scroll Animation */
+
+gsap.set(".sus-values-item-sub-wrap", {
+  height: 0,
+  opacity: 0,
+  margin: 0,
+});
+
+let homeValues = gsap.timeline({
+  scrollTrigger: {
+    trigger: ".section_sus-values",
+    start: "top top",
+    end: "bottom top",
+    scrub: true,
+    pin: true,
+    //markers: true,
+  },
+});
+
+const items = document.querySelectorAll(".sus-values-item-wrap");
+const subItems = document.querySelectorAll(".sus-values-item-sub-wrap");
+const headers = document.querySelectorAll(".values-h3");
+
+items.forEach((item, index) => {
+  // Close the previous sub-wrap and reset its color
+  if (index > 0) {
+    homeValues.to(
+      subItems[index - 1],
+      {
+        height: 0,
+        opacity: 0,
+        marginTop: 0,
+        duration: 1,
+        ease: "power2.inOut",
+      },
+      ">"
+    ); // Starts when the next one begins opening
+
+    homeValues.to(
+      items[index - 1],
+      {
+        color: "#03020C", // Replace with your default color
+        duration: 0.5,
+        ease: "power2.out",
+      },
+      "<"
+    ); // Aligns with the start of the closing animation
+
+    homeValues.to(
+      headers[index - 1],
+      {
+        color: "#03020C", // Replace with your default color
+        duration: 0.5,
+        ease: "power2.out",
+      },
+      "<"
+    ); // Aligns with the item color reset
+  }
+
+  // Change the color of the current header
+  homeValues.to(
+    headers[index],
+    {
+      color: "#C85204",
+      duration: 0.5,
+      ease: "power2.out",
+    },
+    "<"
+  ); // Aligns with the start of the previous close animation
+
+  // Change the color of the current item
+  homeValues.to(
+    item,
+    {
+      color: "#C85204",
+      duration: 0.5,
+      ease: "power2.out",
+    },
+    "<"
+  ); // Aligns with the header color change
+
+  // Open the current sub-wrap
+  homeValues.to(
+    subItems[index],
+    {
+      height: "auto",
+      opacity: 1,
+      marginTop: "2em",
+      duration: 1,
+      ease: "power2.inOut",
+      onComplete: () => ScrollTrigger.refresh(),
+    },
+    "<"
+  ); // Overlaps with the closing animation of the previous sub-wrap
+});
+
+}
+
+/* ------------- END OF CAREERS -------------- */
