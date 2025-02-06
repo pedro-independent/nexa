@@ -54,7 +54,6 @@ let hoverSound, clickSound;
 })();
 
 /* Menu Open */
-
 const menuBtn = document.querySelector('.menu-btn');
 const navBg = document.querySelector('.nav-bg');
 const navFill = document.querySelector('.nav-fill');
@@ -92,7 +91,6 @@ menuBtn.addEventListener('click', () => {
 
 
 /* Buttons Hover */
-
 let splitText;
 function runSplit() {
   splitText = new SplitType("[stagger-link]", {
