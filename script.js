@@ -148,6 +148,18 @@ ScrollTrigger.create({
   }
 });
 
+gsap.to(indicator, {
+  opacity: 0,
+  duration: 0.5,
+  scrollTrigger: {
+    trigger: ".footer",
+    start: "top bottom", // When the top of the footer touches the bottom of the viewport
+    end: "top center",   // Fully fade out before footer is fully in view
+    scrub: true,
+    markers: true,
+  }
+});
+
 /* Parallax Images */
 document.querySelectorAll("[data-parallax-container]").forEach((container) => {
   const image = container.querySelector("[data-parallax-img]");
