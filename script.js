@@ -216,13 +216,25 @@ gsap.to(".quick-item", {
     start: "top 75%",
     end: "bottom 75%",
     onComplete: () => ScrollTrigger.refresh(),
-    //markers: true,
-    //toggleActions: "play reverse play reverse",
   },
 });
 
 /* Footer Logo Reveal */
 
+gsap.fromTo(".glyph",
+  { y: "100%" }, 
+  { 
+    y: "0%", 
+    ease: "power1.out", 
+    stagger: 0.1,
+    scrollTrigger: {
+      trigger: ".footer",
+      start: "top 60%", 
+      end: "center 60%",
+      scrub: 2,
+    }
+  }
+);
 
 
 /* ------------- END OF ALL -------------- */
