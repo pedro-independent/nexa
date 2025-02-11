@@ -205,7 +205,6 @@ document.querySelectorAll("[data-parallax-container]").forEach((container) => {
 });
 
 /* Quick Links Reveal */
-
 gsap.to(".quick-item", {
   y: "3em",
   duration: 0.3,
@@ -220,22 +219,21 @@ gsap.to(".quick-item", {
 });
 
 /* Footer Logo Reveal */
-
-gsap.fromTo(".glyph",
-  { y: "100%" }, 
-  { 
-    y: "0%", 
-    ease: "power1.out", 
+gsap.fromTo(
+  ".glyph",
+  { y: "100%" },
+  {
+    y: "0%",
+    ease: "power1.out",
     stagger: 0.1,
     scrollTrigger: {
       trigger: ".footer",
-      start: "top 60%", 
-      end: "center 60%",
-      scrub: 2,
-    }
+      start: "top 60%",
+      end: "35% 60%",
+      scrub: 1,
+    },
   }
 );
-
 
 /* ------------- END OF ALL -------------- */
 
@@ -260,36 +258,24 @@ if (page === "home") {
     onComplete: () => ScrollTrigger.refresh(),
   });
 
-  gsap.set(
-    ".nav-link",
-  {
-    color: "#fafafa"
+  gsap.set(".nav-link", {
+    color: "#fafafa",
   });
 
-  gsap.set(
-    ".logo-svg",
-  {
-    color: "#fafafa"
+  gsap.set(".logo-svg", {
+    color: "#fafafa",
   });
-  gsap.set(
-    ".menu-btn",
-  {
-    color: "#fafafa"
+  gsap.set(".menu-btn", {
+    color: "#fafafa",
   });
-  gsap.set(
-    ".sound-icon",
-  {
-    color: "#fafafa"
+  gsap.set(".sound-icon", {
+    color: "#fafafa",
   });
-  gsap.set(
-    ".menu-btn",
-  {
-    borderColor: "#fafafa"
+  gsap.set(".menu-btn", {
+    borderColor: "#fafafa",
   });
-  gsap.set(
-    ".sound-btn",
-  {
-    borderColor: "#fafafa"
+  gsap.set(".sound-btn", {
+    borderColor: "#fafafa",
   });
 
   heroImage.to(
@@ -354,7 +340,6 @@ if (page === "home") {
   );
 
   /* Homepage Social Proof Horizontal Scroll */
-
   let horizontalSections = gsap.utils.toArray(".section_social-proof");
 
   horizontalSections.forEach((container) => {
@@ -394,11 +379,6 @@ if (page === "home") {
               start: "center right",
               end: "center center",
               scrub: true,
-              // markers: {
-              //   startColor: "green",
-              //   endColor: "blue",
-              //   fontSize: "12px",
-              // },
             },
           }
         );
@@ -440,7 +420,6 @@ if (page === "home") {
     });
 
   /* Values Scroll Animation */
-
   gsap.set(".home-values-item-sub-wrap", {
     height: 0,
     opacity: 0,
@@ -451,10 +430,11 @@ if (page === "home") {
     scrollTrigger: {
       trigger: ".section_home-values",
       start: "top top",
-      end: "bottom top",
+      //end: "bottom top",
+      end: "+=200%",
       scrub: true,
       pin: true,
-      //markers: true,
+      //pinSpacing: false, // Prevents adding extra space after unpinning
     },
   });
 
@@ -463,7 +443,6 @@ if (page === "home") {
   const headers = document.querySelectorAll(".values-h3");
 
   items.forEach((item, index) => {
-    // Close the previous sub-wrap and reset its color
     if (index > 0) {
       homeValues.to(
         subItems[index - 1],
@@ -475,30 +454,29 @@ if (page === "home") {
           ease: "power2.inOut",
         },
         ">"
-      ); // Starts when the next one begins opening
+      );
 
       homeValues.to(
         items[index - 1],
         {
-          color: "#03020C", // Replace with your default color
+          color: "#03020C",
           duration: 0.5,
           ease: "power2.out",
         },
         "<"
-      ); // Aligns with the start of the closing animation
+      );
 
       homeValues.to(
         headers[index - 1],
         {
-          color: "#03020C", // Replace with your default color
+          color: "#03020C",
           duration: 0.5,
           ease: "power2.out",
         },
         "<"
-      ); // Aligns with the item color reset
+      );
     }
 
-    // Change the color of the current header
     homeValues.to(
       headers[index],
       {
@@ -507,9 +485,8 @@ if (page === "home") {
         ease: "power2.out",
       },
       "<"
-    ); // Aligns with the start of the previous close animation
+    );
 
-    // Change the color of the current item
     homeValues.to(
       item,
       {
@@ -518,9 +495,8 @@ if (page === "home") {
         ease: "power2.out",
       },
       "<"
-    ); // Aligns with the header color change
+    );
 
-    // Open the current sub-wrap
     homeValues.to(
       subItems[index],
       {
@@ -532,7 +508,7 @@ if (page === "home") {
         onComplete: () => ScrollTrigger.refresh(),
       },
       "<"
-    ); // Overlaps with the closing animation of the previous sub-wrap
+    );
   });
 }
 
@@ -592,36 +568,77 @@ if (page === "careers") {
 
 /* ------------- FUNDS -------------- */
 if (page === "funds") {
-  let fundsTl = gsap.timeline({
-    scrollTrigger: {
-      trigger: ".section_funds",
-      start: "top top",
-      end: "bottom top",
-      scrub: true,
-      //pin: true,
-      //markers: true,
-    },
-  });
+  // let fundsTl = gsap.timeline({
+  //   scrollTrigger: {
+  //     trigger: ".section_funds",
+  //     start: "top top",
+  //     end: "bottom top",
+  //     scrub: true,
+  //     //pin: true,
+  //     //markers: true,
+  //   },
+  // });
 
-  // Animate each item
-  gsap.utils.toArray(".funds-item").forEach((item, index) => {
-    let itemTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: item,
-        start: "top center",
-        end: "bottom center",
-        scrub: true,
-        //pin: true,
-      },
-    });
+  // // Animate each item
+  // gsap.utils.toArray(".funds-item").forEach((item, index) => {
+  //   let itemTl = gsap.timeline({
+  //     scrollTrigger: {
+  //       trigger: item,
+  //       start: "top center",
+  //       end: "bottom center",
+  //       scrub: true,
+  //       //pin: true,
+  //     },
+  //   });
 
-    itemTl.to(item, {
-      scale: 0.9,
-      opacity: 0.5,
-      duration: 1,
-      ease: "power1.out",
+  //   itemTl.to(item, {
+  //     scale: 0.9,
+  //     opacity: 0.5,
+  //     duration: 1,
+  //     ease: "power1.out",
+  //   });
+  // });
+
+  const stickyCards = () => {
+    const panels = Array.from(document.querySelectorAll(".funds-item"));
+  
+    panels.forEach((panel, index) => {
+      const isLast = index === panels.length - 1;
+  
+      // Skip animation for the last panel
+      if (!isLast) {
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: panel,
+              start: `top ${10 + index * 15}%`, // Staggered start
+              scrub: 1,
+              //markers: true,
+            },
+          })
+          .to(
+            panel,
+            {
+              ease: "none",
+              startAt: { filter: "blur(0px)", opacity: 1 },
+              filter: "blur(4px)",
+              opacity: 0,
+              scale: 0.8,
+            },
+            "<"
+          );
+      }
     });
-  });
+  };
+  stickyCards();
+  
+  
+
+  // const fundsItems = document.querySelectorAll(".funds-item");
+
+  // fundsItems.forEach((item, index) => {
+  //   item.style.top = `${5 + index * 5}em`; // First item: 5em, Second: 10em, Third: 15em, etc.
+  // });
 }
 /* ------------- END OF FUNDS -------------- */
 
