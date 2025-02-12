@@ -18,6 +18,7 @@ async function fetchBase64(url) {
 
 // Initialize and preload sounds
 let hoverSound, clickSound;
+let soundEnabled = sessionStorage.getItem("soundEnabled") === "true"; // Retrieve state
 
 (async function preloadSounds() {
   try {
@@ -33,24 +34,52 @@ let hoverSound, clickSound;
     hoverSound = new Audio(`data:audio/wav;base64,${hoverBase64}`);
     clickSound = new Audio(`data:audio/wav;base64,${clickBase64}`);
 
-    // Add event listeners after sounds are loaded
+    // Add event listeners for hover and click sounds
     document.querySelectorAll("[hover-sound]").forEach((element) => {
       element.addEventListener("mouseenter", () => {
-        hoverSound.currentTime = 0; // Reset sound to the start
-        hoverSound.play();
+        if (soundEnabled) {
+          hoverSound.currentTime = 0; // Reset sound to the start
+          hoverSound.play();
+        }
       });
     });
 
     document.querySelectorAll("[click-sound]").forEach((element) => {
       element.addEventListener("click", () => {
-        clickSound.currentTime = 0; // Reset sound to the start
-        clickSound.play();
+        if (soundEnabled) {
+          clickSound.currentTime = 0; // Reset sound to the start
+          clickSound.play();
+        }
       });
     });
+
+    // Toggle sound button
+    const soundBtn = document.querySelector(".sound-btn");
+    if (soundBtn) {
+      updateButtonState(soundBtn, soundEnabled); // Update button state on page load
+
+      soundBtn.addEventListener("click", () => {
+        soundEnabled = !soundEnabled; // Toggle sound state
+        sessionStorage.setItem("soundEnabled", soundEnabled); // Save state
+        updateButtonState(soundBtn, soundEnabled);
+      });
+    }
+
   } catch (error) {
     console.error("Error loading sounds:", error);
   }
 })();
+
+// Function to update button UI based on sound state
+function updateButtonState(button, enabled) {
+  if (enabled) {
+    button.classList.add("active"); // Add class to indicate sound is on (optional styling)
+  } else {
+    button.classList.remove("active");
+  }
+}
+
+
 
 /* Menu Open */
 const menuBtn = document.querySelector(".menu-btn");
@@ -242,102 +271,38 @@ if (page === "home") {
   gsap.registerPlugin(ScrollTrigger);
 
   /* Homepage Hero Animation */
-  let heroImage = gsap.timeline({
-    scrollTrigger: {
-      trigger: ".home-hero-bg",
-      start: "center center",
-      end: "80% center",
-      scrub: true,
-      pin: true,
-    },
-  });
+let heroImage = gsap.timeline({
+  scrollTrigger: {
+    trigger: ".home-hero-bg",
+    start: "center center",
+    end: "80% center",
+    scrub: true,
+    pin: true,
+  },
+});
 
-  heroImage.to(".home-hero-bg", {
-    scale: 0.4,
-    duration: 3,
-    onComplete: () => ScrollTrigger.refresh(),
-  });
+// Scale down hero background
+heroImage.to(".home-hero-bg", {
+  scale: 0.4,
+  duration: 3,
+  onComplete: () => ScrollTrigger.refresh(),
+});
 
-  gsap.set(".nav-link", {
-    color: "#fafafa",
-  });
+// Set initial colors
+gsap.set([".nav-link", ".logo-svg", ".menu-btn", ".sound-icon"], { color: "#fafafa" });
+gsap.set([".menu-btn", ".sound-btn"], { borderColor: "#fafafa" });
 
-  gsap.set(".logo-svg", {
-    color: "#fafafa",
-  });
-  gsap.set(".menu-btn", {
-    color: "#fafafa",
-  });
-  gsap.set(".sound-icon", {
-    color: "#fafafa",
-  });
-  gsap.set(".menu-btn", {
-    borderColor: "#fafafa",
-  });
-  gsap.set(".sound-btn", {
-    borderColor: "#fafafa",
-  });
+// Fade out hero content and change colors dynamically
+heroImage.to(".home-hero-wrapper", { opacity: 0, duration: 1 }, "-=3");
 
-  heroImage.to(
-    ".home-hero-wrapper",
-    {
-      opacity: 0,
-      duration: 1,
-    },
-    "-=3"
-  );
+heroImage.to([".nav-link", ".logo-svg", ".menu-btn", ".sound-icon"], { 
+  color: "#03020C", duration: 1 
+}, "<");
 
-  heroImage.to(
-    ".nav-link",
-    {
-      color: "#03020C",
-      duration: 1,
-    },
-    "<"
-  );
+heroImage.to([".menu-btn", ".sound-btn"], { 
+  borderColor: "#03020C", duration: 1 
+}, "<");
 
-  heroImage.to(
-    ".logo-svg",
-    {
-      color: "#03020C",
-      duration: 1,
-    },
-    "<"
-  );
-  heroImage.to(
-    ".menu-btn",
-    {
-      color: "#03020C",
-      duration: 1,
-    },
-    "<"
-  );
-  heroImage.to(
-    ".sound-icon",
-    {
-      color: "#03020C",
-      duration: 1,
-    },
-    "<"
-  );
-
-  heroImage.to(
-    ".menu-btn",
-    {
-      borderColor: "#03020C",
-      duration: 1,
-    },
-    "<"
-  );
-
-  heroImage.to(
-    ".sound-btn",
-    {
-      borderColor: "#03020C",
-      duration: 1,
-    },
-    "<"
-  );
 
   /* Homepage Social Proof Horizontal Scroll */
   let horizontalSections = gsap.utils.toArray(".section_social-proof");
