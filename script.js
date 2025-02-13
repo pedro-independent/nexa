@@ -676,36 +676,49 @@ if (page === "careers") {
 
 /* ------------- FUNDS -------------- */
 if (page === "funds") {
-  // let fundsTl = gsap.timeline({
-  //   scrollTrigger: {
-  //     trigger: ".section_funds",
-  //     start: "top top",
-  //     end: "bottom top",
-  //     scrub: true,
-  //     //pin: true,
-  //     //markers: true,
-  //   },
-  // });
 
-  // // Animate each item
-  // gsap.utils.toArray(".funds-item").forEach((item, index) => {
-  //   let itemTl = gsap.timeline({
-  //     scrollTrigger: {
-  //       trigger: item,
-  //       start: "top center",
-  //       end: "bottom center",
-  //       scrub: true,
-  //       //pin: true,
-  //     },
-  //   });
 
-  //   itemTl.to(item, {
-  //     scale: 0.9,
-  //     opacity: 0.5,
-  //     duration: 1,
-  //     ease: "power1.out",
-  //   });
-  // });
+/* Dif Modal Open */
+const openModalBtns = document.querySelectorAll("[open-modal]");
+const closeModalBtns = document.querySelectorAll(".close-btn");
+const modalBg = document.querySelector(".modal-bg");
+const modalFill = document.querySelector(".modal-fill");
+
+let modalOpen = false;
+
+openModalBtns.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    if (!modalOpen) {
+      modalBg.style.display = "flex";
+
+      gsap.to(modalFill, {
+        x: "0%",
+        duration: 0.6,
+        ease: "power2.out",
+        onComplete: () => {
+          modalOpen = true;
+        },
+      });
+    }
+  });
+});
+
+closeModalBtns.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    if (modalOpen) {
+      gsap.to(modalFill, {
+        x: "100%",
+        duration: 0.6,
+        ease: "power2.in",
+        onComplete: () => {
+          modalBg.style.display = "none";
+          modalOpen = false;
+        },
+      });
+    }
+  });
+});
+
 
   const stickyCards = () => {
     const panels = Array.from(document.querySelectorAll(".funds-item"));
