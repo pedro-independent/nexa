@@ -55,13 +55,23 @@ let soundEnabled = sessionStorage.getItem("soundEnabled") === "true"; // Retriev
 
     // Toggle sound button
     const soundBtn = document.querySelector(".sound-btn");
-    if (soundBtn) {
-      updateButtonState(soundBtn, soundEnabled); // Update button state on page load
+    const soundIcon = document.querySelector(".sound-icon"); // Lottie animation element
+
+    if (soundBtn && soundIcon) {
+      const lottieInstance = bodymovin.loadAnimation({
+        container: soundIcon,
+        renderer: "svg",
+        loop: true,
+        autoplay: soundEnabled, // Autoplay only if sound is enabled
+        path: "https://cdn.prod.website-files.com/6756dbc5ed5ad48503f2c85a/67adf537fb7c431b8891109c_sound-lottie.json", // Update with your Lottie JSON file path
+      });
+
+      updateButtonState(soundBtn, lottieInstance, soundEnabled); // Update button state on page load
 
       soundBtn.addEventListener("click", () => {
         soundEnabled = !soundEnabled; // Toggle sound state
         sessionStorage.setItem("soundEnabled", soundEnabled); // Save state
-        updateButtonState(soundBtn, soundEnabled);
+        updateButtonState(soundBtn, lottieInstance, soundEnabled);
       });
     }
 
@@ -70,14 +80,17 @@ let soundEnabled = sessionStorage.getItem("soundEnabled") === "true"; // Retriev
   }
 })();
 
-// Function to update button UI based on sound state
-function updateButtonState(button, enabled) {
+// Function to update button UI and control Lottie animation
+function updateButtonState(button, lottieInstance, enabled) {
   if (enabled) {
     button.classList.add("active"); // Add class to indicate sound is on (optional styling)
+    lottieInstance.play(); // Play Lottie animation
   } else {
     button.classList.remove("active");
+    lottieInstance.stop(); // Stop Lottie animation
   }
 }
+
 
 /* Check Section Theme on Scroll */
 function initCheckSectionThemeScroll() {
@@ -736,6 +749,42 @@ if (page === "funds") {
   // });
 }
 /* ------------- END OF FUNDS -------------- */
+
+if (page === "assets") {
+  const stickyCards = () => {
+    const panels = Array.from(document.querySelectorAll(".assets-item"));
+  
+    panels.forEach((panel, index) => {
+      const isLast = index === panels.length - 1;
+  
+      // Skip animation for the last panel
+      if (!isLast) {
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: panel,
+              start: `top ${10 + index * 15}%`, // Staggered start
+              scrub: 1,
+              //markers: true,
+            },
+          })
+          .to(
+            panel,
+            {
+              ease: "none",
+              startAt: { filter: "blur(0px)", opacity: 1 },
+              filter: "blur(4px)",
+              opacity: 0,
+              scale: 0.8,
+            },
+            "<"
+          );
+      }
+    });
+  };
+  stickyCards();
+
+}
 
 /* ------------- CAREERS -------------- */
 
