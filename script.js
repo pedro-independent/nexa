@@ -74,7 +74,6 @@ let soundEnabled = sessionStorage.getItem("soundEnabled") === "true"; // Retriev
         updateButtonState(soundBtn, lottieInstance, soundEnabled);
       });
     }
-
   } catch (error) {
     console.error("Error loading sounds:", error);
   }
@@ -91,27 +90,29 @@ function updateButtonState(button, lottieInstance, enabled) {
   }
 }
 
-
 /* Check Section Theme on Scroll */
 function initCheckSectionThemeScroll() {
-
   // Get detection offset, in this case the navbar
-  const navBarHeight = document.querySelector("[data-nav-bar-height]")
+  const navBarHeight = document.querySelector("[data-nav-bar-height]");
   const themeObserverOffset = navBarHeight ? navBarHeight.offsetHeight / 2 : 0;
 
   function checkThemeSection() {
     const themeSections = document.querySelectorAll("[data-theme-section]");
 
-    themeSections.forEach(function(themeSection) {
+    themeSections.forEach(function (themeSection) {
       const rect = themeSection.getBoundingClientRect();
       const themeSectionTop = rect.top;
       const themeSectionBottom = rect.bottom;
 
       // If the offset is between the top & bottom of the current section
-      if (themeSectionTop <= themeObserverOffset && themeSectionBottom >= themeObserverOffset) {
+      if (
+        themeSectionTop <= themeObserverOffset &&
+        themeSectionBottom >= themeObserverOffset
+      ) {
         // Check [data-theme-section]
-        const themeSectionActive = themeSection.getAttribute("data-theme-section");
-        document.querySelectorAll("[data-theme-nav]").forEach(function(elem) {
+        const themeSectionActive =
+          themeSection.getAttribute("data-theme-section");
+        document.querySelectorAll("[data-theme-nav]").forEach(function (elem) {
           if (elem.getAttribute("data-theme-nav") !== themeSectionActive) {
             elem.setAttribute("data-theme-nav", themeSectionActive);
           }
@@ -119,7 +120,7 @@ function initCheckSectionThemeScroll() {
 
         // Check [data-bg-section]
         const bgSectionActive = themeSection.getAttribute("data-bg-section");
-        document.querySelectorAll("[data-bg-nav]").forEach(function(elem) {
+        document.querySelectorAll("[data-bg-nav]").forEach(function (elem) {
           if (elem.getAttribute("data-bg-nav") !== bgSectionActive) {
             elem.setAttribute("data-bg-nav", bgSectionActive);
           }
@@ -138,7 +139,7 @@ function initCheckSectionThemeScroll() {
 }
 
 // Initialize Check Section Theme on Scroll
-  initCheckSectionThemeScroll();
+initCheckSectionThemeScroll();
 
 /* Menu Open */
 const menuBtn = document.querySelector(".menu-btn");
@@ -330,169 +331,141 @@ if (page === "home") {
   gsap.registerPlugin(ScrollTrigger);
 
   /* Homepage Hero Animation */
-let heroImage = gsap.timeline({
-  scrollTrigger: {
-    trigger: ".home-hero-bg",
-    start: "center center",
-    end: "80% center",
-    scrub: true,
-    pin: true,
-  },
-});
-
-// Scale down hero background
-heroImage.to(".home-hero-bg", {
-  scale: 0.4,
-  duration: 3,
-  onComplete: () => ScrollTrigger.refresh(),
-});
-
-// Set initial colors
-// gsap.set([".nav-link", ".logo-svg", ".menu-btn", ".sound-icon"], { color: "#fafafa" });
-// gsap.set([".menu-btn", ".sound-btn"], { borderColor: "#fafafa" });
-
-// Fade out hero content and change colors dynamically
-heroImage.to(".home-hero-wrapper", { opacity: 0, duration: 1 }, "-=3");
-
-// heroImage.to([".nav-link", ".logo-svg", ".menu-btn", ".sound-icon"], { 
-//   color: "#03020C", duration: 1 
-// }, "<");
-
-// heroImage.to([".menu-btn", ".sound-btn"], { 
-//   borderColor: "#03020C", duration: 1 
-// }, "<");
-
-
-  /* Homepage Social Proof Horizontal Scroll */
-  let horizontalSections = gsap.utils.toArray(".section_social-proof");
-
-  horizontalSections.forEach((container) => {
-    let sections = container.querySelectorAll(".social-proof-item");
-
-    // Create the horizontal scroll animation
-    let containerAnim = gsap.to(sections, {
-      xPercent: -100 * (sections.length - 1),
-      ease: "none",
-    });
-
-    // Create the ScrollTrigger for the horizontal scrolling
-    ScrollTrigger.create({
-      trigger: container,
-      animation: containerAnim,
-      //pin: true,
-      scrub: 1,
-      start: "top center",
-      //end: "+=3500",
-      end: "bottom center",
-      //markers: true,
-    });
-
-    // Animate each h3 based on scroll progress
-    sections.forEach((section, index) => {
-      let h3 = section.querySelector(".social-proof-h3");
-
-      if (h3) {
-        gsap.fromTo(
-          h3,
-          { fontSize: "6.25em" },
-          {
-            fontSize: "17em",
-            scrollTrigger: {
-              containerAnimation: containerAnim,
-              trigger: section,
-              start: "center right",
-              end: "center center",
-              scrub: true,
-            },
-          }
-        );
-      }
-    });
+  if (window.innerWidth > 991) {
+  let heroImage = gsap.timeline({
+    scrollTrigger: {
+      trigger: ".home-hero-bg",
+      start: "center center",
+      end: "80% center",
+      scrub: true,
+      pin: true,
+    },
   });
 
+  // Scale down hero background
+  heroImage.to(".home-hero-bg", {
+    scale: 0.4,
+    duration: 3,
+    onComplete: () => ScrollTrigger.refresh(),
+  });
+
+  // Fade out hero content and change colors dynamically
+  heroImage.to(".home-hero-wrapper", { opacity: 0, duration: 1 }, "-=3");
+}
+  
   function initMarqueeScrollDirection() {
-    document.querySelectorAll('[data-marquee-scroll-direction-target]').forEach((marquee) => {
-      // Query marquee elements
-      const marqueeContent = marquee.querySelector('[data-marquee-collection-target]');
-      const marqueeScroll = marquee.querySelector('[data-marquee-scroll-target]');
-      if (!marqueeContent || !marqueeScroll) return;
-  
-      // Get data attributes
-      const { marqueeSpeed: speed, marqueeDirection: direction, marqueeDuplicate: duplicate, marqueeScrollSpeed: scrollSpeed } = marquee.dataset;
-  
-      // Convert data attributes to usable types
-      const marqueeSpeedAttr = parseFloat(speed);
-      const marqueeDirectionAttr = direction === 'right' ? 1 : -1; // 1 for right, -1 for left
-      const duplicateAmount = parseInt(duplicate || 0);
-      const scrollSpeedAttr = parseFloat(scrollSpeed);
-      const speedMultiplier = window.innerWidth < 479 ? 0.25 : window.innerWidth < 991 ? 0.5 : 1;
-  
-      let marqueeSpeed = marqueeSpeedAttr * (marqueeContent.offsetWidth / window.innerWidth) * speedMultiplier;
-  
-      // Precompute styles for the scroll container
-      marqueeScroll.style.marginLeft = `${scrollSpeedAttr * -1}%`;
-      marqueeScroll.style.width = `${(scrollSpeedAttr * 2) + 100}%`;
-  
-      // Duplicate marquee content
-      if (duplicateAmount > 0) {
-        const fragment = document.createDocumentFragment();
-        for (let i = 0; i < duplicateAmount; i++) {
-          fragment.appendChild(marqueeContent.cloneNode(true));
+    document
+      .querySelectorAll("[data-marquee-scroll-direction-target]")
+      .forEach((marquee) => {
+        // Query marquee elements
+        const marqueeContent = marquee.querySelector(
+          "[data-marquee-collection-target]"
+        );
+        const marqueeScroll = marquee.querySelector(
+          "[data-marquee-scroll-target]"
+        );
+        if (!marqueeContent || !marqueeScroll) return;
+
+        // Get data attributes
+        const {
+          marqueeSpeed: speed,
+          marqueeDirection: direction,
+          marqueeDuplicate: duplicate,
+          marqueeScrollSpeed: scrollSpeed,
+        } = marquee.dataset;
+
+        // Convert data attributes to usable types
+        const marqueeSpeedAttr = parseFloat(speed);
+        const marqueeDirectionAttr = direction === "right" ? 1 : -1; // 1 for right, -1 for left
+        const duplicateAmount = parseInt(duplicate || 0);
+        const scrollSpeedAttr = parseFloat(scrollSpeed);
+        const speedMultiplier =
+          window.innerWidth < 479 ? 0.25 : window.innerWidth < 991 ? 0.5 : 1;
+
+        let marqueeSpeed =
+          marqueeSpeedAttr *
+          (marqueeContent.offsetWidth / window.innerWidth) *
+          speedMultiplier;
+
+        // Precompute styles for the scroll container
+        marqueeScroll.style.marginLeft = `${scrollSpeedAttr * -1}%`;
+        marqueeScroll.style.width = `${scrollSpeedAttr * 2 + 100}%`;
+
+        // Duplicate marquee content
+        if (duplicateAmount > 0) {
+          const fragment = document.createDocumentFragment();
+          for (let i = 0; i < duplicateAmount; i++) {
+            fragment.appendChild(marqueeContent.cloneNode(true));
+          }
+          marqueeScroll.appendChild(fragment);
         }
-        marqueeScroll.appendChild(fragment);
-      }
-  
-      // GSAP animation for marquee content
-      const marqueeItems = marquee.querySelectorAll('[data-marquee-collection-target]');
-      const animation = gsap.to(marqueeItems, {
-        xPercent: -100, // Move completely out of view
-        repeat: -1,
-        duration: marqueeSpeed,
-        ease: 'linear'
-      }).totalProgress(0.5);
-  
-      // Initialize marquee in the correct direction
-      gsap.set(marqueeItems, { xPercent: marqueeDirectionAttr === 1 ? 100 : -100 });
-      animation.timeScale(marqueeDirectionAttr); // Set correct direction
-      animation.play(); // Start animation immediately
-  
-      // Set initial marquee status
-      marquee.setAttribute('data-marquee-status', 'normal');
-  
-      // ScrollTrigger logic for direction inversion
-      ScrollTrigger.create({
-        trigger: marquee,
-        start: 'top bottom',
-        end: 'bottom top',
-        onUpdate: (self) => {
-          const isInverted = self.direction === 1; // Scrolling down
-          const currentDirection = isInverted ? -marqueeDirectionAttr : marqueeDirectionAttr;
-  
-          // Update animation direction and marquee status
-          animation.timeScale(currentDirection);
-          marquee.setAttribute('data-marquee-status', isInverted ? 'normal' : 'inverted');
-        }
-      });
-  
-      // Extra speed effect on scroll
-      const tl = gsap.timeline({
-        scrollTrigger: {
+
+        // GSAP animation for marquee content
+        const marqueeItems = marquee.querySelectorAll(
+          "[data-marquee-collection-target]"
+        );
+        const animation = gsap
+          .to(marqueeItems, {
+            xPercent: -100, // Move completely out of view
+            repeat: -1,
+            duration: marqueeSpeed,
+            ease: "linear",
+          })
+          .totalProgress(0.5);
+
+        // Initialize marquee in the correct direction
+        gsap.set(marqueeItems, {
+          xPercent: marqueeDirectionAttr === 1 ? 100 : -100,
+        });
+        animation.timeScale(marqueeDirectionAttr); // Set correct direction
+        animation.play(); // Start animation immediately
+
+        // Set initial marquee status
+        marquee.setAttribute("data-marquee-status", "normal");
+
+        // ScrollTrigger logic for direction inversion
+        ScrollTrigger.create({
           trigger: marquee,
-          start: '0% 100%',
-          end: '100% 0%',
-          scrub: 0
-        }
+          start: "top bottom",
+          end: "bottom top",
+          onUpdate: (self) => {
+            const isInverted = self.direction === 1; // Scrolling down
+            const currentDirection = isInverted
+              ? -marqueeDirectionAttr
+              : marqueeDirectionAttr;
+
+            // Update animation direction and marquee status
+            animation.timeScale(currentDirection);
+            marquee.setAttribute(
+              "data-marquee-status",
+              isInverted ? "normal" : "inverted"
+            );
+          },
+        });
+
+        // Extra speed effect on scroll
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: marquee,
+            start: "0% 100%",
+            end: "100% 0%",
+            scrub: 0,
+          },
+        });
+
+        const scrollStart =
+          marqueeDirectionAttr === -1 ? scrollSpeedAttr : -scrollSpeedAttr;
+        const scrollEnd = -scrollStart;
+
+        tl.fromTo(
+          marqueeScroll,
+          { x: `${scrollStart}vw` },
+          { x: `${scrollEnd}vw`, ease: "none" }
+        );
       });
-  
-      const scrollStart = marqueeDirectionAttr === -1 ? scrollSpeedAttr : -scrollSpeedAttr;
-      const scrollEnd = -scrollStart;
-  
-      tl.fromTo(marqueeScroll, { x: `${scrollStart}vw` }, { x: `${scrollEnd}vw`, ease: 'none' });
-    });
   }
 
-    initMarqueeScrollDirection();
-
+  initMarqueeScrollDirection();
 
   /* Home About Images Parallax */
 
@@ -528,23 +501,25 @@ heroImage.to(".home-hero-wrapper", { opacity: 0, duration: 1 }, "-=3");
     });
 
   /* Values Scroll Animation */
-  gsap.set(".home-values-item-sub-wrap", {
-    height: 0,
-    opacity: 0,
-    margin: 0,
-  });
+  if (window.innerWidth > 991) {
+    gsap.set(".home-values-item-sub-wrap", {
+      height: 0,
+      opacity: 0,
+      margin: 0,
+    });
 
-  let homeValues = gsap.timeline({
-    scrollTrigger: {
-      trigger: ".section_home-values",
-      start: "top top",
-      //end: "bottom top",
-      end: "+=200%",
-      scrub: true,
-      pin: true,
-      //pinSpacing: false, // Prevents adding extra space after unpinning
-    },
-  });
+    let homeValues = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".section_home-values",
+        start: "top top",
+        //end: "bottom top",
+        end: "+=200%",
+        scrub: true,
+        pin: true,
+        //pinSpacing: false, // Prevents adding extra space after unpinning
+      },
+    });
+  
 
   const items = document.querySelectorAll(".home-values-item-wrap");
   const subItems = document.querySelectorAll(".home-values-item-sub-wrap");
@@ -619,6 +594,8 @@ heroImage.to(".home-hero-wrapper", { opacity: 0, duration: 1 }, "-=3");
     );
   });
 }
+}
+
 
 /* ------------- END OF ALL -------------- */
 
@@ -676,56 +653,53 @@ if (page === "careers") {
 
 /* ------------- FUNDS -------------- */
 if (page === "funds") {
+  /* Dif Modal Open */
+  const openModalBtns = document.querySelectorAll("[open-modal]");
+  const closeModalBtns = document.querySelectorAll(".close-btn");
+  const modalBg = document.querySelector(".modal-bg");
+  const modalFill = document.querySelector(".modal-fill");
 
+  let modalOpen = false;
 
-/* Dif Modal Open */
-const openModalBtns = document.querySelectorAll("[open-modal]");
-const closeModalBtns = document.querySelectorAll(".close-btn");
-const modalBg = document.querySelector(".modal-bg");
-const modalFill = document.querySelector(".modal-fill");
+  openModalBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      if (!modalOpen) {
+        modalBg.style.display = "flex";
 
-let modalOpen = false;
-
-openModalBtns.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    if (!modalOpen) {
-      modalBg.style.display = "flex";
-
-      gsap.to(modalFill, {
-        x: "0%",
-        duration: 0.6,
-        ease: "power2.out",
-        onComplete: () => {
-          modalOpen = true;
-        },
-      });
-    }
+        gsap.to(modalFill, {
+          x: "0%",
+          duration: 0.6,
+          ease: "power2.out",
+          onComplete: () => {
+            modalOpen = true;
+          },
+        });
+      }
+    });
   });
-});
 
-closeModalBtns.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    if (modalOpen) {
-      gsap.to(modalFill, {
-        x: "100%",
-        duration: 0.6,
-        ease: "power2.in",
-        onComplete: () => {
-          modalBg.style.display = "none";
-          modalOpen = false;
-        },
-      });
-    }
+  closeModalBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      if (modalOpen) {
+        gsap.to(modalFill, {
+          x: "100%",
+          duration: 0.6,
+          ease: "power2.in",
+          onComplete: () => {
+            modalBg.style.display = "none";
+            modalOpen = false;
+          },
+        });
+      }
+    });
   });
-});
-
 
   const stickyCards = () => {
     const panels = Array.from(document.querySelectorAll(".funds-item"));
-  
+
     panels.forEach((panel, index) => {
       const isLast = index === panels.length - 1;
-  
+
       // Skip animation for the last panel
       if (!isLast) {
         gsap
@@ -752,8 +726,6 @@ closeModalBtns.forEach((btn) => {
     });
   };
   stickyCards();
-  
-  
 
   // const fundsItems = document.querySelectorAll(".funds-item");
 
@@ -766,10 +738,10 @@ closeModalBtns.forEach((btn) => {
 if (page === "assets") {
   const stickyCards = () => {
     const panels = Array.from(document.querySelectorAll(".assets-item"));
-  
+
     panels.forEach((panel, index) => {
       const isLast = index === panels.length - 1;
-  
+
       // Skip animation for the last panel
       if (!isLast) {
         gsap
@@ -796,14 +768,92 @@ if (page === "assets") {
     });
   };
   stickyCards();
+}
 
+if (page === "assets-detail") {
+if (window.innerWidth > 991) {
+
+  /* Custom Cursor */
+
+  // Set the cursor position to follow the mouse
+  gsap.set(".cursor", { xPercent: -50, yPercent: -50 });
+
+  let cursorX = gsap.quickTo(".cursor", "x", { duration: 0.5, ease: "power2" });
+  let cursorY = gsap.quickTo(".cursor", "y", { duration: 0.5, ease: "power2" });
+
+  window.addEventListener("mousemove", (e) => {
+    cursorX(e.clientX);
+    cursorY(e.clientY);
+  });
+
+  // Select all elements with the [data-cursor] attribute
+  let links = document.querySelectorAll("[data-cursor]");
+  let cursorText = document.querySelector(".cursor p"); // Select the <p> inside .cursor
+
+  links.forEach((link) => {
+    let text = link.getAttribute("data-cursor"); // Get the attribute value
+
+    link.addEventListener("mouseenter", () => {
+      cursorText.textContent = text; // Update the <p> text inside .cursor
+    });
+
+    link.addEventListener("mouseleave", () => {
+      cursorText.textContent = ""; // Reset the text when the mouse leaves
+    });
+  });
+
+}
 }
 
 /* ------------- CAREERS -------------- */
 
-if (page === "sustainability") {
-  /* Sustainability Values Scroll Animation */
+if (page === "careers") {
+  /* Dif Modal Open */
+  const openModalBtns = document.querySelectorAll("[open-modal]");
+  const closeModalBtns = document.querySelectorAll(".close-btn");
+  const modalBg = document.querySelector(".modal-bg");
+  const modalFill = document.querySelector(".modal-fill");
 
+  let modalOpen = false;
+
+  openModalBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      if (!modalOpen) {
+        modalBg.style.display = "flex";
+
+        gsap.to(modalFill, {
+          x: "0%",
+          duration: 0.6,
+          ease: "power2.out",
+          onComplete: () => {
+            modalOpen = true;
+          },
+        });
+      }
+    });
+  });
+
+  closeModalBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      if (modalOpen) {
+        gsap.to(modalFill, {
+          x: "100%",
+          duration: 0.6,
+          ease: "power2.in",
+          onComplete: () => {
+            modalBg.style.display = "none";
+            modalOpen = false;
+          },
+        });
+      }
+    });
+  });
+}
+
+if (page === "sustainability") {
+
+  /* Sustainability Values Scroll Animation */
+  if (window.innerWidth > 991) {
   gsap.set(".sus-values-item-sub-wrap", {
     height: 0,
     opacity: 0,
@@ -898,5 +948,5 @@ if (page === "sustainability") {
     ); // Overlaps with the closing animation of the previous sub-wrap
   });
 }
-
+}
 /* ------------- END OF CAREERS -------------- */
