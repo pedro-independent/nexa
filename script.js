@@ -202,6 +202,7 @@ menuBtn.addEventListener("click", () => {
 });
 
 /* Buttons Hover */
+if (window.innerWidth > 991) {
 let splitText;
 function runSplit() {
   splitText = new SplitType("[stagger-link]", {
@@ -220,7 +221,7 @@ window.addEventListener("resize", function () {
   }
 });
 
-// ———— animation
+// ———— animation 
 const staggerLinks = document.querySelectorAll("[stagger-link]");
 staggerLinks.forEach((link) => {
   const letters = link.querySelectorAll("[stagger-link-text] .word");
@@ -242,6 +243,7 @@ staggerLinks.forEach((link) => {
     });
   });
 });
+}
 
 gsap.registerPlugin(ScrollTrigger);
 
