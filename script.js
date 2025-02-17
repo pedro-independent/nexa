@@ -202,7 +202,7 @@ menuBtn.addEventListener("click", () => {
 });
 
 /* Buttons Hover */
-if (window.innerWidth > 991) {
+//if (window.innerWidth > 991) {
 let splitText;
 function runSplit() {
   splitText = new SplitType("[stagger-link]", {
@@ -243,7 +243,7 @@ staggerLinks.forEach((link) => {
     });
   });
 });
-}
+//}
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -296,18 +296,42 @@ document.querySelectorAll("[data-parallax-container]").forEach((container) => {
 });
 
 /* Quick Links Reveal */
-gsap.to(".quick-item", {
-  y: "3em",
-  duration: 0.3,
-  stagger: 0.1,
-  ease: "power2.in",
-  scrollTrigger: {
-    trigger: ".section_quick-links",
-    start: "top 75%",
-    end: "bottom 75%",
-    onComplete: () => ScrollTrigger.refresh(),
-  },
-});
+// gsap.to(".quick-item", {
+//   y: "3em",
+//   duration: 0.3,
+//   stagger: 0.1,
+//   ease: "power2.in",
+//   scrollTrigger: {
+//     trigger: ".section_quick-links",
+//     start: "top 75%",
+//     end: "bottom 75%",
+//     onComplete: () => ScrollTrigger.refresh(),
+//   },
+// });
+
+// Select all quick items
+// const quickItems = document.querySelectorAll(".quick-item");
+
+// // Loop through each item and add event listeners
+// quickItems.forEach((item) => {
+//   item.addEventListener("mouseenter", () => {
+//     gsap.to(item, {
+//       y: "0em",
+//       duration: 0.3,
+//       ease: "power2.in",
+//     });
+//   });
+
+//   item.addEventListener("mouseleave", () => {
+//     gsap.to(item, {
+//       y: "3em",
+//       duration: 0.3,
+//       ease: "power2.out",
+//     });
+//   });
+// });
+
+
 
 /* Footer Logo Reveal */
 gsap.fromTo(
