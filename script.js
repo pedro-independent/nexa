@@ -221,7 +221,7 @@ window.addEventListener("resize", function () {
   }
 });
 
-// ———— animation 
+// ———— animation
 const staggerLinks = document.querySelectorAll("[stagger-link]");
 staggerLinks.forEach((link) => {
   const letters = link.querySelectorAll("[stagger-link-text] .word");
@@ -331,8 +331,6 @@ document.querySelectorAll("[data-parallax-container]").forEach((container) => {
 //   });
 // });
 
-
-
 /* Footer Logo Reveal */
 gsap.fromTo(
   ".glyph",
@@ -358,27 +356,27 @@ if (page === "home") {
 
   /* Homepage Hero Animation */
   if (window.innerWidth > 991) {
-  let heroImage = gsap.timeline({
-    scrollTrigger: {
-      trigger: ".home-hero-bg",
-      start: "center center",
-      end: "80% center",
-      scrub: true,
-      pin: true,
-    },
-  });
+    let heroImage = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".home-hero-bg",
+        start: "center center",
+        end: "80% center",
+        scrub: true,
+        pin: true,
+      },
+    });
 
-  // Scale down hero background
-  heroImage.to(".home-hero-bg", {
-    scale: 0.4,
-    duration: 3,
-    onComplete: () => ScrollTrigger.refresh(),
-  });
+    // Scale down hero background
+    heroImage.to(".home-hero-bg", {
+      scale: 0.4,
+      duration: 3,
+      onComplete: () => ScrollTrigger.refresh(),
+    });
 
-  // Fade out hero content and change colors dynamically
-  heroImage.to(".home-hero-wrapper", { opacity: 0, duration: 1 }, "-=3");
-}
-  
+    // Fade out hero content and change colors dynamically
+    heroImage.to(".home-hero-wrapper", { opacity: 0, duration: 1 }, "-=3");
+  }
+
   function initMarqueeScrollDirection() {
     document
       .querySelectorAll("[data-marquee-scroll-direction-target]")
@@ -545,83 +543,81 @@ if (page === "home") {
         //pinSpacing: false, // Prevents adding extra space after unpinning
       },
     });
-  
 
-  const items = document.querySelectorAll(".home-values-item-wrap");
-  const subItems = document.querySelectorAll(".home-values-item-sub-wrap");
-  const headers = document.querySelectorAll(".values-h3");
+    const items = document.querySelectorAll(".home-values-item-wrap");
+    const subItems = document.querySelectorAll(".home-values-item-sub-wrap");
+    const headers = document.querySelectorAll(".values-h3");
 
-  items.forEach((item, index) => {
-    if (index > 0) {
+    items.forEach((item, index) => {
+      if (index > 0) {
+        homeValues.to(
+          subItems[index - 1],
+          {
+            height: 0,
+            opacity: 0,
+            marginTop: 0,
+            duration: 1,
+            ease: "power2.inOut",
+          },
+          ">"
+        );
+
+        homeValues.to(
+          items[index - 1],
+          {
+            color: "#03020C",
+            duration: 0.5,
+            ease: "power2.out",
+          },
+          "<"
+        );
+
+        homeValues.to(
+          headers[index - 1],
+          {
+            color: "#03020C",
+            duration: 0.5,
+            ease: "power2.out",
+          },
+          "<"
+        );
+      }
+
       homeValues.to(
-        subItems[index - 1],
+        headers[index],
         {
-          height: 0,
-          opacity: 0,
-          marginTop: 0,
+          color: "#C85204",
+          duration: 0.5,
+          ease: "power2.out",
+        },
+        "<"
+      );
+
+      homeValues.to(
+        item,
+        {
+          color: "#C85204",
+          duration: 0.5,
+          ease: "power2.out",
+        },
+        "<"
+      );
+
+      homeValues.to(
+        subItems[index],
+        {
+          height: "auto",
+          opacity: 1,
+          marginTop: "2em",
           duration: 1,
           ease: "power2.inOut",
-        },
-        ">"
-      );
-
-      homeValues.to(
-        items[index - 1],
-        {
-          color: "#03020C",
-          duration: 0.5,
-          ease: "power2.out",
+          onComplete: () => ScrollTrigger.refresh(),
         },
         "<"
       );
-
-      homeValues.to(
-        headers[index - 1],
-        {
-          color: "#03020C",
-          duration: 0.5,
-          ease: "power2.out",
-        },
-        "<"
-      );
-    }
-
-    homeValues.to(
-      headers[index],
-      {
-        color: "#C85204",
-        duration: 0.5,
-        ease: "power2.out",
-      },
-      "<"
-    );
-
-    homeValues.to(
-      item,
-      {
-        color: "#C85204",
-        duration: 0.5,
-        ease: "power2.out",
-      },
-      "<"
-    );
-
-    homeValues.to(
-      subItems[index],
-      {
-        height: "auto",
-        opacity: 1,
-        marginTop: "2em",
-        duration: 1,
-        ease: "power2.inOut",
-        onComplete: () => ScrollTrigger.refresh(),
-      },
-      "<"
-    );
-  });
+    });
+  }
 }
-}
-
 
 /* ------------- END OF ALL -------------- */
 
@@ -667,12 +663,89 @@ if (page === "about") {
     });
   });
 }
+if (window.innerWidth > 991) {
+  const teamMembers = document.querySelectorAll(".team-item");
+
+  teamMembers.forEach((member, index) => {
+    if ((index + 1) % 5 === 0) {
+      // Create the special div
+      const specialDiv = document.createElement("div");
+      specialDiv.classList.add("team-item-strokes");
+
+      // Create and append 36 stroke divs
+      for (let i = 0; i < 36; i++) {
+        const strokeDiv = document.createElement("div");
+        strokeDiv.classList.add("stroke");
+        specialDiv.appendChild(strokeDiv);
+      }
+
+      // Insert after the current team member
+      member.parentNode.insertBefore(specialDiv, member.nextSibling);
+
+      // Optional: GSAP Animation
+      gsap.from(specialDiv, {
+        opacity: 0,
+        y: 20,
+        duration: 1,
+        ease: "power2.out",
+      });
+    }
+  });
+
+  // Make strokes rotate towards cursor
+  const strokes = document.querySelectorAll(".stroke");
+
+  const updateRotation = (e) => {
+    strokes.forEach((stroke) => {
+      const rect = stroke.getBoundingClientRect();
+      const strokeX = rect.left + rect.width / 2;
+      const strokeY = rect.bottom;
+
+      let angle =
+        Math.atan2(e.clientY - strokeY, e.clientX - strokeX) * (180 / Math.PI);
+
+      let currentRotation = gsap.getProperty(stroke, "rotation");
+      let delta = ((angle - currentRotation + 540) % 360) - 180;
+
+      gsap.to(stroke, {
+        rotation: currentRotation + delta,
+        duration: 0.5,
+        ease: "power2.out",
+      });
+    });
+  };
+  window.addEventListener("mousemove", updateRotation);
+}
 
 /* ------------- END OF ABOUT -------------- */
 
 /* ------------- CAREERS -------------- */
 
 if (page === "careers") {
+
+  /* Open position form name */
+    document.querySelectorAll(".submit-link").forEach((button) => {
+      button.addEventListener("click", function () {
+        let positionName = this.getAttribute("data-position"); 
+        let heading = document.querySelector(".career-form-h2");
+  
+        if (positionName && heading) {
+          // Get the original Webflow text (before replacement)
+          let originalText = heading.getAttribute("data-original-text");
+  
+          // Store the original text if it hasn't been stored yet
+          if (!originalText) {
+            originalText = heading.textContent;
+            heading.setAttribute("data-original-text", originalText);
+          }
+  
+          // Set the text dynamically, replacing {position} placeholder if it exists
+          heading.textContent = originalText.replace("{position}", positionName);
+        }
+      });
+    });
+  
+  
 }
 
 /* ------------- END OF CAREERS -------------- */
@@ -797,38 +870,42 @@ if (page === "assets") {
 }
 
 if (page === "assets-detail") {
-if (window.innerWidth > 991) {
+  if (window.innerWidth > 991) {
+    /* Custom Cursor */
 
-  /* Custom Cursor */
+    // Set the cursor position to follow the mouse
+    gsap.set(".cursor", { xPercent: -50, yPercent: -50 });
 
-  // Set the cursor position to follow the mouse
-  gsap.set(".cursor", { xPercent: -50, yPercent: -50 });
-
-  let cursorX = gsap.quickTo(".cursor", "x", { duration: 0.5, ease: "power2" });
-  let cursorY = gsap.quickTo(".cursor", "y", { duration: 0.5, ease: "power2" });
-
-  window.addEventListener("mousemove", (e) => {
-    cursorX(e.clientX);
-    cursorY(e.clientY);
-  });
-
-  // Select all elements with the [data-cursor] attribute
-  let links = document.querySelectorAll("[data-cursor]");
-  let cursorText = document.querySelector(".cursor p"); // Select the <p> inside .cursor
-
-  links.forEach((link) => {
-    let text = link.getAttribute("data-cursor"); // Get the attribute value
-
-    link.addEventListener("mouseenter", () => {
-      cursorText.textContent = text; // Update the <p> text inside .cursor
+    let cursorX = gsap.quickTo(".cursor", "x", {
+      duration: 0.5,
+      ease: "power2",
+    });
+    let cursorY = gsap.quickTo(".cursor", "y", {
+      duration: 0.5,
+      ease: "power2",
     });
 
-    link.addEventListener("mouseleave", () => {
-      cursorText.textContent = ""; // Reset the text when the mouse leaves
+    window.addEventListener("mousemove", (e) => {
+      cursorX(e.clientX);
+      cursorY(e.clientY);
     });
-  });
 
-}
+    // Select all elements with the [data-cursor] attribute
+    let links = document.querySelectorAll("[data-cursor]");
+    let cursorText = document.querySelector(".cursor p"); // Select the <p> inside .cursor
+
+    links.forEach((link) => {
+      let text = link.getAttribute("data-cursor"); // Get the attribute value
+
+      link.addEventListener("mouseenter", () => {
+        cursorText.textContent = text; // Update the <p> text inside .cursor
+      });
+
+      link.addEventListener("mouseleave", () => {
+        cursorText.textContent = ""; // Reset the text when the mouse leaves
+      });
+    });
+  }
 }
 
 /* ------------- CAREERS -------------- */
@@ -877,102 +954,126 @@ if (page === "careers") {
 }
 
 if (page === "sustainability") {
-
   /* Sustainability Values Scroll Animation */
   if (window.innerWidth > 991) {
-  gsap.set(".sus-values-item-sub-wrap", {
-    height: 0,
-    opacity: 0,
-    margin: 0,
-  });
+    gsap.set(".sus-values-item-sub-wrap", {
+      height: 0,
+      opacity: 0,
+      margin: 0,
+    });
 
-  let homeValues = gsap.timeline({
-    scrollTrigger: {
-      trigger: ".section_sus-values",
-      start: "top top",
-      end: "bottom top",
-      scrub: true,
-      pin: true,
-      //markers: true,
-    },
-  });
+    let homeValues = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".section_sus-values",
+        start: "top top",
+        end: "bottom top",
+        scrub: true,
+        pin: true,
+        //markers: true,
+      },
+    });
 
-  const items = document.querySelectorAll(".sus-values-item-wrap");
-  const subItems = document.querySelectorAll(".sus-values-item-sub-wrap");
-  const headers = document.querySelectorAll(".values-h3");
+    const items = document.querySelectorAll(".sus-values-item-wrap");
+    const subItems = document.querySelectorAll(".sus-values-item-sub-wrap");
+    const headers = document.querySelectorAll(".values-h3");
 
-  items.forEach((item, index) => {
-    // Close the previous sub-wrap and reset its color
-    if (index > 0) {
+    items.forEach((item, index) => {
+      // Close the previous sub-wrap and reset its color
+      if (index > 0) {
+        homeValues.to(
+          subItems[index - 1],
+          {
+            height: 0,
+            opacity: 0,
+            marginTop: 0,
+            duration: 1,
+            ease: "power2.inOut",
+          },
+          ">"
+        ); // Starts when the next one begins opening
+
+        homeValues.to(
+          items[index - 1],
+          {
+            color: "#03020C", // Replace with your default color
+            duration: 0.5,
+            ease: "power2.out",
+          },
+          "<"
+        ); // Aligns with the start of the closing animation
+
+        homeValues.to(
+          headers[index - 1],
+          {
+            color: "#03020C", // Replace with your default color
+            duration: 0.5,
+            ease: "power2.out",
+          },
+          "<"
+        ); // Aligns with the item color reset
+      }
+
+      // Change the color of the current header
       homeValues.to(
-        subItems[index - 1],
+        headers[index],
         {
-          height: 0,
-          opacity: 0,
-          marginTop: 0,
+          color: "#C85204",
+          duration: 0.5,
+          ease: "power2.out",
+        },
+        "<"
+      ); // Aligns with the start of the previous close animation
+
+      // Change the color of the current item
+      homeValues.to(
+        item,
+        {
+          color: "#C85204",
+          duration: 0.5,
+          ease: "power2.out",
+        },
+        "<"
+      ); // Aligns with the header color change
+
+      // Open the current sub-wrap
+      homeValues.to(
+        subItems[index],
+        {
+          height: "auto",
+          opacity: 1,
+          marginTop: "2em",
           duration: 1,
           ease: "power2.inOut",
-        },
-        ">"
-      ); // Starts when the next one begins opening
-
-      homeValues.to(
-        items[index - 1],
-        {
-          color: "#03020C", // Replace with your default color
-          duration: 0.5,
-          ease: "power2.out",
+          onComplete: () => ScrollTrigger.refresh(),
         },
         "<"
-      ); // Aligns with the start of the closing animation
+      ); // Overlaps with the closing animation of the previous sub-wrap
+    });
+  }
 
-      homeValues.to(
-        headers[index - 1],
-        {
-          color: "#03020C", // Replace with your default color
-          duration: 0.5,
-          ease: "power2.out",
-        },
-        "<"
-      ); // Aligns with the item color reset
+
+    function checkCollectionItems() {
+      const sectionKPI = document.querySelector(".section-kpi");
+      const collectionList = document.querySelector(".marquee-advanced__scroll"); // Adjust the class to match your Webflow collection list
+  
+      if (collectionList && sectionKPI) {
+        const visibleItems = collectionList.querySelectorAll(".marquee-advanced__item:not([style*='display: none'])");
+  
+        if (visibleItems.length === 0) {
+          sectionKPI.style.display = "none"; // Hide section if no items are visible
+        } else {
+          sectionKPI.style.display = "flex"; // Show section if items exist
+        }
+      }
     }
+  
+    // Run the check initially
+    checkCollectionItems();
+  
+    // Run again if filters are applied (adjust according to your filter system)
+    const observer = new MutationObserver(checkCollectionItems);
+    observer.observe(document.querySelector(".marquee-advanced__scroll"), { childList: true, subtree: true });
 
-    // Change the color of the current header
-    homeValues.to(
-      headers[index],
-      {
-        color: "#C85204",
-        duration: 0.5,
-        ease: "power2.out",
-      },
-      "<"
-    ); // Aligns with the start of the previous close animation
-
-    // Change the color of the current item
-    homeValues.to(
-      item,
-      {
-        color: "#C85204",
-        duration: 0.5,
-        ease: "power2.out",
-      },
-      "<"
-    ); // Aligns with the header color change
-
-    // Open the current sub-wrap
-    homeValues.to(
-      subItems[index],
-      {
-        height: "auto",
-        opacity: 1,
-        marginTop: "2em",
-        duration: 1,
-        ease: "power2.inOut",
-        onComplete: () => ScrollTrigger.refresh(),
-      },
-      "<"
-    ); // Overlaps with the closing animation of the previous sub-wrap
-  });
-}
+  
 }
 /* ------------- END OF CAREERS -------------- */
