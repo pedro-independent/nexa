@@ -377,6 +377,35 @@ if (page === "home") {
     heroImage.to(".home-hero-wrapper", { opacity: 0, duration: 1 }, "-=3");
   }
 
+  if (window.innerWidth > 991) {
+    // Set the cursor position to follow the mouse
+    gsap.set(".tooltip", { xPercent: -0, yPercent: -50 });
+
+    let cursorX = gsap.quickTo(".tooltip", "x", {
+      duration: 0.5,
+      ease: "power2",
+    });
+    let cursorY = gsap.quickTo(".tooltip", "y", {
+      duration: 0.5,
+      ease: "power2",
+    });
+
+    // Update cursor position on mouse movement
+    window.addEventListener("mousemove", (e) => {
+      cursorX(e.clientX);
+      cursorY(e.clientY);
+    });
+
+    // Ensure cursor is always visible
+    const cursor = document.querySelector(".tooltip");
+    cursor.style.display = "block";
+
+    // Hide cursor on click
+    window.addEventListener("click", () => {
+      cursor.style.display = "none";
+    });
+  }
+
   function initMarqueeScrollDirection() {
     document
       .querySelectorAll("[data-marquee-scroll-direction-target]")
@@ -722,30 +751,27 @@ if (window.innerWidth > 991) {
 /* ------------- CAREERS -------------- */
 
 if (page === "careers") {
-
   /* Open position form name */
-    document.querySelectorAll(".submit-link").forEach((button) => {
-      button.addEventListener("click", function () {
-        let positionName = this.getAttribute("data-position"); 
-        let heading = document.querySelector(".career-form-h2");
-  
-        if (positionName && heading) {
-          // Get the original Webflow text (before replacement)
-          let originalText = heading.getAttribute("data-original-text");
-  
-          // Store the original text if it hasn't been stored yet
-          if (!originalText) {
-            originalText = heading.textContent;
-            heading.setAttribute("data-original-text", originalText);
-          }
-  
-          // Set the text dynamically, replacing {position} placeholder if it exists
-          heading.textContent = originalText.replace("{position}", positionName);
+  document.querySelectorAll(".submit-link").forEach((button) => {
+    button.addEventListener("click", function () {
+      let positionName = this.getAttribute("data-position");
+      let heading = document.querySelector(".career-form-h2");
+
+      if (positionName && heading) {
+        // Get the original Webflow text (before replacement)
+        let originalText = heading.getAttribute("data-original-text");
+
+        // Store the original text if it hasn't been stored yet
+        if (!originalText) {
+          originalText = heading.textContent;
+          heading.setAttribute("data-original-text", originalText);
         }
-      });
+
+        // Set the text dynamically, replacing {position} placeholder if it exists
+        heading.textContent = originalText.replace("{position}", positionName);
+      }
     });
-  
-  
+  });
 }
 
 /* ------------- END OF CAREERS -------------- */
@@ -825,14 +851,293 @@ if (page === "funds") {
     });
   };
   stickyCards();
-
-  // const fundsItems = document.querySelectorAll(".funds-item");
-
-  // fundsItems.forEach((item, index) => {
-  //   item.style.top = `${5 + index * 5}em`; // First item: 5em, Second: 10em, Third: 15em, etc.
-  // });
 }
 /* ------------- END OF FUNDS -------------- */
+
+if (page === "funds-detail") {
+  function initMarqueeScrollDirection() {
+    document
+      .querySelectorAll("[data-marquee-scroll-direction-target]")
+      .forEach((marquee) => {
+        // Query marquee elements
+        const marqueeContent = marquee.querySelector(
+          "[data-marquee-collection-target]"
+        );
+        const marqueeScroll = marquee.querySelector(
+          "[data-marquee-scroll-target]"
+        );
+        if (!marqueeContent || !marqueeScroll) return;
+
+        // Get data attributes
+        const {
+          marqueeSpeed: speed,
+          marqueeDirection: direction,
+          marqueeDuplicate: duplicate,
+          marqueeScrollSpeed: scrollSpeed,
+        } = marquee.dataset;
+
+        // Convert data attributes to usable types
+        const marqueeSpeedAttr = parseFloat(speed);
+        const marqueeDirectionAttr = direction === "right" ? 1 : -1; // 1 for right, -1 for left
+        const duplicateAmount = parseInt(duplicate || 0);
+        const scrollSpeedAttr = parseFloat(scrollSpeed);
+        const speedMultiplier =
+          window.innerWidth < 479 ? 0.25 : window.innerWidth < 991 ? 0.5 : 1;
+
+        let marqueeSpeed =
+          marqueeSpeedAttr *
+          (marqueeContent.offsetWidth / window.innerWidth) *
+          speedMultiplier;
+
+        // Precompute styles for the scroll container
+        marqueeScroll.style.marginLeft = `${scrollSpeedAttr * -1}%`;
+        marqueeScroll.style.width = `${scrollSpeedAttr * 2 + 100}%`;
+
+        // Duplicate marquee content
+        if (duplicateAmount > 0) {
+          const fragment = document.createDocumentFragment();
+          for (let i = 0; i < duplicateAmount; i++) {
+            fragment.appendChild(marqueeContent.cloneNode(true));
+          }
+          marqueeScroll.appendChild(fragment);
+        }
+
+        // GSAP animation for marquee content
+        const marqueeItems = marquee.querySelectorAll(
+          "[data-marquee-collection-target]"
+        );
+        const animation = gsap
+          .to(marqueeItems, {
+            xPercent: -100, // Move completely out of view
+            repeat: -1,
+            duration: marqueeSpeed,
+            ease: "linear",
+          })
+          .totalProgress(0.5);
+
+        // Initialize marquee in the correct direction
+        gsap.set(marqueeItems, {
+          xPercent: marqueeDirectionAttr === 1 ? 100 : -100,
+        });
+        animation.timeScale(marqueeDirectionAttr); // Set correct direction
+        animation.play(); // Start animation immediately
+
+        // Set initial marquee status
+        marquee.setAttribute("data-marquee-status", "normal");
+
+        // ScrollTrigger logic for direction inversion
+        ScrollTrigger.create({
+          trigger: marquee,
+          start: "top bottom",
+          end: "bottom top",
+          onUpdate: (self) => {
+            const isInverted = self.direction === 1; // Scrolling down
+            const currentDirection = isInverted
+              ? -marqueeDirectionAttr
+              : marqueeDirectionAttr;
+
+            // Update animation direction and marquee status
+            animation.timeScale(currentDirection);
+            marquee.setAttribute(
+              "data-marquee-status",
+              isInverted ? "normal" : "inverted"
+            );
+          },
+        });
+
+        // Extra speed effect on scroll
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: marquee,
+            start: "0% 100%",
+            end: "100% 0%",
+            scrub: 0,
+          },
+        });
+
+        const scrollStart =
+          marqueeDirectionAttr === -1 ? scrollSpeedAttr : -scrollSpeedAttr;
+        const scrollEnd = -scrollStart;
+
+        tl.fromTo(
+          marqueeScroll,
+          { x: `${scrollStart}vw` },
+          { x: `${scrollEnd}vw`, ease: "none" }
+        );
+      });
+  }
+
+  initMarqueeScrollDirection();
+
+  function checkCollectionItems() {
+    const sectionKPI = document.querySelector(".section-kpi");
+    const collectionList = document.querySelector(".marquee-advanced__scroll"); // Adjust the class to match your Webflow collection list
+
+    if (collectionList && sectionKPI) {
+      const visibleItems = collectionList.querySelectorAll(
+        ".marquee-advanced__item:not([style*='display: none'])"
+      );
+
+      if (visibleItems.length === 0) {
+        sectionKPI.style.display = "none"; // Hide section if no items are visible
+      } else {
+        sectionKPI.style.display = "flex"; // Show section if items exist
+      }
+    }
+  }
+
+  // Run the check initially
+  checkCollectionItems();
+
+  // Run again if filters are applied (adjust according to your filter system)
+  const observer = new MutationObserver(checkCollectionItems);
+  observer.observe(document.querySelector(".marquee-advanced__scroll"), {
+    childList: true,
+    subtree: true,
+  });
+}
+if (page === "assets-detail") {
+  function initMarqueeScrollDirection() {
+    document
+      .querySelectorAll("[data-marquee-scroll-direction-target]")
+      .forEach((marquee) => {
+        // Query marquee elements
+        const marqueeContent = marquee.querySelector(
+          "[data-marquee-collection-target]"
+        );
+        const marqueeScroll = marquee.querySelector(
+          "[data-marquee-scroll-target]"
+        );
+        if (!marqueeContent || !marqueeScroll) return;
+
+        // Get data attributes
+        const {
+          marqueeSpeed: speed,
+          marqueeDirection: direction,
+          marqueeDuplicate: duplicate,
+          marqueeScrollSpeed: scrollSpeed,
+        } = marquee.dataset;
+
+        // Convert data attributes to usable types
+        const marqueeSpeedAttr = parseFloat(speed);
+        const marqueeDirectionAttr = direction === "right" ? 1 : -1; // 1 for right, -1 for left
+        const duplicateAmount = parseInt(duplicate || 0);
+        const scrollSpeedAttr = parseFloat(scrollSpeed);
+        const speedMultiplier =
+          window.innerWidth < 479 ? 0.25 : window.innerWidth < 991 ? 0.5 : 1;
+
+        let marqueeSpeed =
+          marqueeSpeedAttr *
+          (marqueeContent.offsetWidth / window.innerWidth) *
+          speedMultiplier;
+
+        // Precompute styles for the scroll container
+        marqueeScroll.style.marginLeft = `${scrollSpeedAttr * -1}%`;
+        marqueeScroll.style.width = `${scrollSpeedAttr * 2 + 100}%`;
+
+        // Duplicate marquee content
+        if (duplicateAmount > 0) {
+          const fragment = document.createDocumentFragment();
+          for (let i = 0; i < duplicateAmount; i++) {
+            fragment.appendChild(marqueeContent.cloneNode(true));
+          }
+          marqueeScroll.appendChild(fragment);
+        }
+
+        // GSAP animation for marquee content
+        const marqueeItems = marquee.querySelectorAll(
+          "[data-marquee-collection-target]"
+        );
+        const animation = gsap
+          .to(marqueeItems, {
+            xPercent: -100, // Move completely out of view
+            repeat: -1,
+            duration: marqueeSpeed,
+            ease: "linear",
+          })
+          .totalProgress(0.5);
+
+        // Initialize marquee in the correct direction
+        gsap.set(marqueeItems, {
+          xPercent: marqueeDirectionAttr === 1 ? 100 : -100,
+        });
+        animation.timeScale(marqueeDirectionAttr); // Set correct direction
+        animation.play(); // Start animation immediately
+
+        // Set initial marquee status
+        marquee.setAttribute("data-marquee-status", "normal");
+
+        // ScrollTrigger logic for direction inversion
+        ScrollTrigger.create({
+          trigger: marquee,
+          start: "top bottom",
+          end: "bottom top",
+          onUpdate: (self) => {
+            const isInverted = self.direction === 1; // Scrolling down
+            const currentDirection = isInverted
+              ? -marqueeDirectionAttr
+              : marqueeDirectionAttr;
+
+            // Update animation direction and marquee status
+            animation.timeScale(currentDirection);
+            marquee.setAttribute(
+              "data-marquee-status",
+              isInverted ? "normal" : "inverted"
+            );
+          },
+        });
+
+        // Extra speed effect on scroll
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: marquee,
+            start: "0% 100%",
+            end: "100% 0%",
+            scrub: 0,
+          },
+        });
+
+        const scrollStart =
+          marqueeDirectionAttr === -1 ? scrollSpeedAttr : -scrollSpeedAttr;
+        const scrollEnd = -scrollStart;
+
+        tl.fromTo(
+          marqueeScroll,
+          { x: `${scrollStart}vw` },
+          { x: `${scrollEnd}vw`, ease: "none" }
+        );
+      });
+  }
+
+  initMarqueeScrollDirection();
+
+  function checkCollectionItems() {
+    const sectionKPI = document.querySelector(".section-kpi");
+    const collectionList = document.querySelector(".marquee-advanced__scroll"); // Adjust the class to match your Webflow collection list
+
+    if (collectionList && sectionKPI) {
+      const visibleItems = collectionList.querySelectorAll(
+        ".marquee-advanced__item:not([style*='display: none'])"
+      );
+
+      if (visibleItems.length === 0) {
+        sectionKPI.style.display = "none"; // Hide section if no items are visible
+      } else {
+        sectionKPI.style.display = "flex"; // Show section if items exist
+      }
+    }
+  }
+
+  // Run the check initially
+  checkCollectionItems();
+
+  // Run again if filters are applied (adjust according to your filter system)
+  const observer = new MutationObserver(checkCollectionItems);
+  observer.observe(document.querySelector(".marquee-advanced__scroll"), {
+    childList: true,
+    subtree: true,
+  });
+}
 
 if (page === "assets") {
   const stickyCards = () => {
@@ -1051,29 +1356,145 @@ if (page === "sustainability") {
     });
   }
 
+  function initMarqueeScrollDirection() {
+    document
+      .querySelectorAll("[data-marquee-scroll-direction-target]")
+      .forEach((marquee) => {
+        // Query marquee elements
+        const marqueeContent = marquee.querySelector(
+          "[data-marquee-collection-target]"
+        );
+        const marqueeScroll = marquee.querySelector(
+          "[data-marquee-scroll-target]"
+        );
+        if (!marqueeContent || !marqueeScroll) return;
 
-    function checkCollectionItems() {
-      const sectionKPI = document.querySelector(".section-kpi");
-      const collectionList = document.querySelector(".marquee-advanced__scroll"); // Adjust the class to match your Webflow collection list
-  
-      if (collectionList && sectionKPI) {
-        const visibleItems = collectionList.querySelectorAll(".marquee-advanced__item:not([style*='display: none'])");
-  
-        if (visibleItems.length === 0) {
-          sectionKPI.style.display = "none"; // Hide section if no items are visible
-        } else {
-          sectionKPI.style.display = "flex"; // Show section if items exist
+        // Get data attributes
+        const {
+          marqueeSpeed: speed,
+          marqueeDirection: direction,
+          marqueeDuplicate: duplicate,
+          marqueeScrollSpeed: scrollSpeed,
+        } = marquee.dataset;
+
+        // Convert data attributes to usable types
+        const marqueeSpeedAttr = parseFloat(speed);
+        const marqueeDirectionAttr = direction === "right" ? 1 : -1; // 1 for right, -1 for left
+        const duplicateAmount = parseInt(duplicate || 0);
+        const scrollSpeedAttr = parseFloat(scrollSpeed);
+        const speedMultiplier =
+          window.innerWidth < 479 ? 0.25 : window.innerWidth < 991 ? 0.5 : 1;
+
+        let marqueeSpeed =
+          marqueeSpeedAttr *
+          (marqueeContent.offsetWidth / window.innerWidth) *
+          speedMultiplier;
+
+        // Precompute styles for the scroll container
+        marqueeScroll.style.marginLeft = `${scrollSpeedAttr * -1}%`;
+        marqueeScroll.style.width = `${scrollSpeedAttr * 2 + 100}%`;
+
+        // Duplicate marquee content
+        if (duplicateAmount > 0) {
+          const fragment = document.createDocumentFragment();
+          for (let i = 0; i < duplicateAmount; i++) {
+            fragment.appendChild(marqueeContent.cloneNode(true));
+          }
+          marqueeScroll.appendChild(fragment);
         }
+
+        // GSAP animation for marquee content
+        const marqueeItems = marquee.querySelectorAll(
+          "[data-marquee-collection-target]"
+        );
+        const animation = gsap
+          .to(marqueeItems, {
+            xPercent: -100, // Move completely out of view
+            repeat: -1,
+            duration: marqueeSpeed,
+            ease: "linear",
+          })
+          .totalProgress(0.5);
+
+        // Initialize marquee in the correct direction
+        gsap.set(marqueeItems, {
+          xPercent: marqueeDirectionAttr === 1 ? 100 : -100,
+        });
+        animation.timeScale(marqueeDirectionAttr); // Set correct direction
+        animation.play(); // Start animation immediately
+
+        // Set initial marquee status
+        marquee.setAttribute("data-marquee-status", "normal");
+
+        // ScrollTrigger logic for direction inversion
+        ScrollTrigger.create({
+          trigger: marquee,
+          start: "top bottom",
+          end: "bottom top",
+          onUpdate: (self) => {
+            const isInverted = self.direction === 1; // Scrolling down
+            const currentDirection = isInverted
+              ? -marqueeDirectionAttr
+              : marqueeDirectionAttr;
+
+            // Update animation direction and marquee status
+            animation.timeScale(currentDirection);
+            marquee.setAttribute(
+              "data-marquee-status",
+              isInverted ? "normal" : "inverted"
+            );
+          },
+        });
+
+        // Extra speed effect on scroll
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: marquee,
+            start: "0% 100%",
+            end: "100% 0%",
+            scrub: 0,
+          },
+        });
+
+        const scrollStart =
+          marqueeDirectionAttr === -1 ? scrollSpeedAttr : -scrollSpeedAttr;
+        const scrollEnd = -scrollStart;
+
+        tl.fromTo(
+          marqueeScroll,
+          { x: `${scrollStart}vw` },
+          { x: `${scrollEnd}vw`, ease: "none" }
+        );
+      });
+  }
+
+  initMarqueeScrollDirection();
+
+  function checkCollectionItems() {
+    const sectionKPI = document.querySelector(".section-kpi");
+    const collectionList = document.querySelector(".marquee-advanced__scroll"); // Adjust the class to match your Webflow collection list
+
+    if (collectionList && sectionKPI) {
+      const visibleItems = collectionList.querySelectorAll(
+        ".marquee-advanced__item:not([style*='display: none'])"
+      );
+
+      if (visibleItems.length === 0) {
+        sectionKPI.style.display = "none"; // Hide section if no items are visible
+      } else {
+        sectionKPI.style.display = "flex"; // Show section if items exist
       }
     }
-  
-    // Run the check initially
-    checkCollectionItems();
-  
-    // Run again if filters are applied (adjust according to your filter system)
-    const observer = new MutationObserver(checkCollectionItems);
-    observer.observe(document.querySelector(".marquee-advanced__scroll"), { childList: true, subtree: true });
+  }
 
-  
+  // Run the check initially
+  checkCollectionItems();
+
+  // Run again if filters are applied (adjust according to your filter system)
+  const observer = new MutationObserver(checkCollectionItems);
+  observer.observe(document.querySelector(".marquee-advanced__scroll"), {
+    childList: true,
+    subtree: true,
+  });
 }
 /* ------------- END OF CAREERS -------------- */
