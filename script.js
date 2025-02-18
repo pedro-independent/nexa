@@ -149,14 +149,11 @@ function updateButtonState(button, enabled) {
 
 /* Check Section Theme on Scroll */
 function initCheckSectionThemeScroll() {
-  // Get detection offset, in this case the navbar
   const navBar = document.querySelector("[data-nav-bar-height]");
   const themeObserverOffset = navBar ? navBar.offsetHeight / 2 : 0;
 
-  // Check if elements are available and perform the scroll actions
   function checkThemeSection() {
     const themeSections = document.querySelectorAll("[data-theme-section]");
-
     themeSections.forEach((themeSection) => {
       const rect = themeSection.getBoundingClientRect();
       const themeSectionTop = rect.top;
@@ -166,11 +163,9 @@ function initCheckSectionThemeScroll() {
         themeSectionTop <= themeObserverOffset &&
         themeSectionBottom >= themeObserverOffset
       ) {
-        // Get active theme attributes (ensure they exist in all languages)
         const themeSectionActive = themeSection.getAttribute("data-theme-section") || "";
         const bgSectionActive = themeSection.getAttribute("data-bg-section") || "";
 
-        // Update elements
         document.querySelectorAll("[data-theme-nav]").forEach((elem) => {
           if (elem.getAttribute("data-theme-nav") !== themeSectionActive) {
             elem.setAttribute("data-theme-nav", themeSectionActive);
@@ -190,26 +185,13 @@ function initCheckSectionThemeScroll() {
     document.addEventListener("scroll", checkThemeSection);
   }
 
-  // Use a MutationObserver to detect Webflow language changes
-  const observer = new MutationObserver(() => {
-    console.log("DOM Change Detected! Re-running checkThemeSection.");
-    checkThemeSection(); // Re-run the check whenever the DOM updates
-  });
-  
-
-  // Set up the observer for body to catch language change events
-  observer.observe(document.body, {
-    childList: true,   // Observe direct children
-    subtree: true,     // Observe all descendants
-  });
-
-  // Initial check and start listening for scroll
   checkThemeSection();
   startThemeCheck();
 }
 
 // Initialize Check Section Theme on Scroll
 initCheckSectionThemeScroll();
+
 
 
 
@@ -641,10 +623,10 @@ if (page === "home") {
         trigger: ".section_home-values",
         start: "top top",
         //end: "bottom top",
-        end: "+=200%",
+        end: "+=100%",
         scrub: true,
         pin: true,
-        //pinSpacing: false, // Prevents adding extra space after unpinning
+        pinSpacing: false, 
       },
     });
 
@@ -723,7 +705,7 @@ if (page === "home") {
   }
 }
 
-/* ------------- END OF ALL -------------- */
+/* ------------- END OF HOME -------------- */
 
 /* ------------- ABOUT -------------- */
 
@@ -827,7 +809,7 @@ if (window.innerWidth > 991) {
 
 if (page === "careers") {
   /* Open position form name */
-  document.querySelectorAll(".submit-link").forEach((button) => {
+  document.querySelectorAll(".position-item").forEach((button) => {
     button.addEventListener("click", function () {
       let positionName = this.getAttribute("data-position");
       let heading = document.querySelector(".career-form-h2");
@@ -1056,7 +1038,7 @@ if (page === "funds-detail") {
       if (visibleItems.length === 0) {
         sectionKPI.style.display = "none"; // Hide section if no items are visible
       } else {
-        sectionKPI.style.display = "flex"; // Show section if items exist
+        sectionKPI.style.display = "block"; // Show section if items exist
       }
     }
   }
@@ -1198,7 +1180,7 @@ if (page === "assets-detail") {
       if (visibleItems.length === 0) {
         sectionKPI.style.display = "none"; // Hide section if no items are visible
       } else {
-        sectionKPI.style.display = "flex"; // Show section if items exist
+        sectionKPI.style.display = "block"; // Show section if items exist
       }
     }
   }
@@ -1251,40 +1233,40 @@ if (page === "assets") {
 
 if (page === "assets-detail") {
   if (window.innerWidth > 991) {
-    /* Custom Cursor */
+    // /* Custom Cursor */
 
-    // Set the cursor position to follow the mouse
-    gsap.set(".cursor", { xPercent: -50, yPercent: -50 });
+    // // Set the cursor position to follow the mouse
+    // gsap.set(".cursor", { xPercent: -50, yPercent: -50 });
 
-    let cursorX = gsap.quickTo(".cursor", "x", {
-      duration: 0.5,
-      ease: "power2",
-    });
-    let cursorY = gsap.quickTo(".cursor", "y", {
-      duration: 0.5,
-      ease: "power2",
-    });
+    // let cursorX = gsap.quickTo(".cursor", "x", {
+    //   duration: 0.5,
+    //   ease: "power2",
+    // });
+    // let cursorY = gsap.quickTo(".cursor", "y", {
+    //   duration: 0.5,
+    //   ease: "power2",
+    // });
 
-    window.addEventListener("mousemove", (e) => {
-      cursorX(e.clientX);
-      cursorY(e.clientY);
-    });
+    // window.addEventListener("mousemove", (e) => {
+    //   cursorX(e.clientX);
+    //   cursorY(e.clientY);
+    // });
 
-    // Select all elements with the [data-cursor] attribute
-    let links = document.querySelectorAll("[data-cursor]");
-    let cursorText = document.querySelector(".cursor p"); // Select the <p> inside .cursor
+    // // Select all elements with the [data-cursor] attribute
+    // let links = document.querySelectorAll("[data-cursor]");
+    // let cursorText = document.querySelector(".cursor p"); // Select the <p> inside .cursor
 
-    links.forEach((link) => {
-      let text = link.getAttribute("data-cursor"); // Get the attribute value
+    // links.forEach((link) => {
+    //   let text = link.getAttribute("data-cursor"); // Get the attribute value
 
-      link.addEventListener("mouseenter", () => {
-        cursorText.textContent = text; // Update the <p> text inside .cursor
-      });
+    //   link.addEventListener("mouseenter", () => {
+    //     cursorText.textContent = text; // Update the <p> text inside .cursor
+    //   });
 
-      link.addEventListener("mouseleave", () => {
-        cursorText.textContent = ""; // Reset the text when the mouse leaves
-      });
-    });
+    //   link.addEventListener("mouseleave", () => {
+    //     cursorText.textContent = ""; // Reset the text when the mouse leaves
+    //   });
+    // });
   }
 }
 
@@ -1346,10 +1328,10 @@ if (page === "sustainability") {
       scrollTrigger: {
         trigger: ".section_sus-values",
         start: "top top",
-        end: "bottom top",
+        end: "+=100%",
         scrub: true,
         pin: true,
-        //markers: true,
+        pinSpacing: false,
       },
     });
 
@@ -1557,7 +1539,7 @@ if (page === "sustainability") {
       if (visibleItems.length === 0) {
         sectionKPI.style.display = "none"; // Hide section if no items are visible
       } else {
-        sectionKPI.style.display = "flex"; // Show section if items exist
+        sectionKPI.style.display = "block"; // Show section if items exist
       }
     }
   }
