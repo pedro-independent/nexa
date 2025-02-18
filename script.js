@@ -622,7 +622,6 @@ if (page === "home") {
       scrollTrigger: {
         trigger: ".section_home-values",
         start: "top top",
-        //end: "bottom top",
         end: "+=100%",
         scrub: true,
         pin: true,
