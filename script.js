@@ -13,114 +13,171 @@ async function fetchBase64(url) {
   if (!response.ok) {
     throw new Error(`Failed to fetch Base64 data: ${response.statusText}`);
   }
-  return response.text(); // Return the raw text content (Base64 string)
+  return response.text();
 }
 
-// Initialize and preload sounds
-let hoverSound, clickSound;
-let soundEnabled = sessionStorage.getItem("soundEnabled") === "true"; // Retrieve state
+// Variables
+let hoverSound = null;
+let clickSound = null;
+let soundEnabled = sessionStorage.getItem("soundEnabled") === "true";
+let firstInteraction = false; // Track first user click
+let lottieInstance = null; // Store Lottie animation instance
 
-(async function preloadSounds() {
+// Function to load sounds
+async function loadSounds() {
   try {
-    // Replace these URLs with the URLs of your .txt files on Webflow
-    const hoverSoundUrl =
-      "https://cdn.prod.website-files.com/6756dbc5ed5ad48503f2c85a/6777d580f0bc14516e1541fc_hover-sound.txt";
-    const clickSoundUrl =
-      "https://cdn.prod.website-files.com/6756dbc5ed5ad48503f2c85a/678153d4aada1967690f015e_click.txt";
+    const hoverSoundUrl = "https://cdn.prod.website-files.com/6756dbc5ed5ad48503f2c85a/6777d580f0bc14516e1541fc_hover-sound.txt";
+    const clickSoundUrl = "https://cdn.prod.website-files.com/6756dbc5ed5ad48503f2c85a/678153d4aada1967690f015e_click.txt";
 
-    const hoverBase64 = await fetchBase64(hoverSoundUrl);
-    const clickBase64 = await fetchBase64(clickSoundUrl);
+    const [hoverBase64, clickBase64] = await Promise.all([
+      fetchBase64(hoverSoundUrl),
+      fetchBase64(clickSoundUrl),
+    ]);
 
     hoverSound = new Audio(`data:audio/wav;base64,${hoverBase64}`);
     clickSound = new Audio(`data:audio/wav;base64,${clickBase64}`);
 
-    // Add event listeners for hover and click sounds
-    document.querySelectorAll("[hover-sound]").forEach((element) => {
-      element.addEventListener("mouseenter", () => {
-        if (soundEnabled) {
-          hoverSound.currentTime = 0; // Reset sound to the start
-          hoverSound.play();
-        }
-      });
-    });
-
-    document.querySelectorAll("[click-sound]").forEach((element) => {
-      element.addEventListener("click", () => {
-        if (soundEnabled) {
-          clickSound.currentTime = 0; // Reset sound to the start
-          clickSound.play();
-        }
-      });
-    });
-
-    // Toggle sound button
-    const soundBtn = document.querySelector(".sound-btn");
-    const soundIcon = document.querySelector(".sound-icon"); // Lottie animation element
-
-    if (soundBtn && soundIcon) {
-      const lottieInstance = bodymovin.loadAnimation({
-        container: soundIcon,
-        renderer: "svg",
-        loop: true,
-        autoplay: soundEnabled, // Autoplay only if sound is enabled
-        path: "https://cdn.prod.website-files.com/6756dbc5ed5ad48503f2c85a/67adf537fb7c431b8891109c_sound-lottie.json", // Update with your Lottie JSON file path
-      });
-
-      updateButtonState(soundBtn, lottieInstance, soundEnabled); // Update button state on page load
-
-      soundBtn.addEventListener("click", () => {
-        soundEnabled = !soundEnabled; // Toggle sound state
-        sessionStorage.setItem("soundEnabled", soundEnabled); // Save state
-        updateButtonState(soundBtn, lottieInstance, soundEnabled);
-      });
-    }
+    console.log("🔊 Sounds Loaded");
   } catch (error) {
     console.error("Error loading sounds:", error);
   }
-})();
+}
 
-// Function to update button UI and control Lottie animation
-function updateButtonState(button, lottieInstance, enabled) {
-  if (enabled) {
-    button.classList.add("active"); // Add class to indicate sound is on (optional styling)
-    lottieInstance.play(); // Play Lottie animation
-  } else {
-    button.classList.remove("active");
-    lottieInstance.stop(); // Stop Lottie animation
+// Function to enable sound & Lottie on first user interaction
+async function enableSoundOnFirstClick() {
+  if (firstInteraction) return;
+  firstInteraction = true;
+
+  if (!hoverSound || !clickSound) {
+    await loadSounds();
+  }
+
+  soundEnabled = true;
+  sessionStorage.setItem("soundEnabled", "true");
+  console.log("✅ Sound Activated on First Click!");
+
+  hoverSound.play().catch(() => {}); 
+  clickSound.play().catch(() => {}); 
+
+  // Play Lottie animation immediately when sound is activated
+  if (lottieInstance) {
+    lottieInstance.goToAndPlay(0, true);
+  }
+
+  document.removeEventListener("click", enableSoundOnFirstClick);
+}
+
+// Attach listener for first user interaction
+document.addEventListener("click", enableSoundOnFirstClick, { once: true });
+
+// Function to play hover sounds
+function playHoverSound() {
+  if (soundEnabled && hoverSound) {
+    hoverSound.currentTime = 0;
+    hoverSound.play();
   }
 }
+
+// Function to play click sounds
+function playClickSound() {
+  if (soundEnabled && clickSound) {
+    clickSound.currentTime = 0;
+    clickSound.play();
+  }
+}
+
+// Function to initialize sounds & Lottie once elements are available
+function checkAndInit() {
+  const soundBtn = document.querySelector(".sound-btn");
+  const soundIcon = document.querySelector(".sound-icon");
+  const hoverElements = document.querySelectorAll("[hover-sound]");
+  const clickElements = document.querySelectorAll("[click-sound]");
+
+  if (soundBtn && soundIcon && hoverElements.length > 0 && clickElements.length > 0) {
+
+    // Load sounds in the background
+    loadSounds();
+
+    // Attach hover and click sound listeners
+    hoverElements.forEach((element) => element.addEventListener("mouseenter", playHoverSound));
+    clickElements.forEach((element) => element.addEventListener("click", playClickSound));
+
+    // Initialize Lottie animation
+    lottieInstance = bodymovin.loadAnimation({
+      container: soundIcon,
+      renderer: "svg",
+      loop: true,
+      autoplay: false, // Don't autoplay yet
+      path: "https://cdn.prod.website-files.com/6756dbc5ed5ad48503f2c85a/67adf537fb7c431b8891109c_sound-lottie.json",
+    });
+
+    // Ensure Lottie is in the correct state on load
+    updateButtonState(soundBtn, soundEnabled);
+
+    // Add click event to toggle sound
+    soundBtn.addEventListener("click", () => {
+      soundEnabled = !soundEnabled;
+      sessionStorage.setItem("soundEnabled", soundEnabled);
+      updateButtonState(soundBtn, soundEnabled);
+    });
+
+    return true; // Elements found, stop checking
+  }
+
+  return false; // Keep checking
+}
+
+// Retry checking for elements every 100ms until found
+const interval = setInterval(() => {
+  if (checkAndInit()) {
+    clearInterval(interval);
+  }
+}, 100);
+  
+// Function to update the sound toggle button & Lottie animation
+function updateButtonState(button, enabled) {
+  if (enabled) {
+    button.classList.add("active");
+    if (lottieInstance) lottieInstance.goToAndPlay(0, true);
+  } else {
+    button.classList.remove("active");
+    if (lottieInstance) lottieInstance.goToAndStop(0, true);
+  }
+}
+
+
 
 /* Check Section Theme on Scroll */
 function initCheckSectionThemeScroll() {
   // Get detection offset, in this case the navbar
-  const navBarHeight = document.querySelector("[data-nav-bar-height]");
-  const themeObserverOffset = navBarHeight ? navBarHeight.offsetHeight / 2 : 0;
+  const navBar = document.querySelector("[data-nav-bar-height]");
+  const themeObserverOffset = navBar ? navBar.offsetHeight / 2 : 0;
 
+  // Check if elements are available and perform the scroll actions
   function checkThemeSection() {
     const themeSections = document.querySelectorAll("[data-theme-section]");
 
-    themeSections.forEach(function (themeSection) {
+    themeSections.forEach((themeSection) => {
       const rect = themeSection.getBoundingClientRect();
       const themeSectionTop = rect.top;
       const themeSectionBottom = rect.bottom;
 
-      // If the offset is between the top & bottom of the current section
       if (
         themeSectionTop <= themeObserverOffset &&
         themeSectionBottom >= themeObserverOffset
       ) {
-        // Check [data-theme-section]
-        const themeSectionActive =
-          themeSection.getAttribute("data-theme-section");
-        document.querySelectorAll("[data-theme-nav]").forEach(function (elem) {
+        // Get active theme attributes (ensure they exist in all languages)
+        const themeSectionActive = themeSection.getAttribute("data-theme-section") || "";
+        const bgSectionActive = themeSection.getAttribute("data-bg-section") || "";
+
+        // Update elements
+        document.querySelectorAll("[data-theme-nav]").forEach((elem) => {
           if (elem.getAttribute("data-theme-nav") !== themeSectionActive) {
             elem.setAttribute("data-theme-nav", themeSectionActive);
           }
         });
 
-        // Check [data-bg-section]
-        const bgSectionActive = themeSection.getAttribute("data-bg-section");
-        document.querySelectorAll("[data-bg-nav]").forEach(function (elem) {
+        document.querySelectorAll("[data-bg-nav]").forEach((elem) => {
           if (elem.getAttribute("data-bg-nav") !== bgSectionActive) {
             elem.setAttribute("data-bg-nav", bgSectionActive);
           }
@@ -133,6 +190,19 @@ function initCheckSectionThemeScroll() {
     document.addEventListener("scroll", checkThemeSection);
   }
 
+  // Use a MutationObserver to detect Webflow language changes
+  const observer = new MutationObserver(() => {
+    console.log("DOM Change Detected! Re-running checkThemeSection.");
+    checkThemeSection(); // Re-run the check whenever the DOM updates
+  });
+  
+
+  // Set up the observer for body to catch language change events
+  observer.observe(document.body, {
+    childList: true,   // Observe direct children
+    subtree: true,     // Observe all descendants
+  });
+
   // Initial check and start listening for scroll
   checkThemeSection();
   startThemeCheck();
@@ -140,6 +210,11 @@ function initCheckSectionThemeScroll() {
 
 // Initialize Check Section Theme on Scroll
 initCheckSectionThemeScroll();
+
+
+
+
+
 
 /* Menu Open */
 const menuBtn = document.querySelector(".menu-btn");
