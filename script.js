@@ -1027,30 +1027,43 @@ if (page === "funds-detail") {
 
   function checkCollectionItems() {
     const sectionKPI = document.querySelector(".section-kpi");
-    const collectionList = document.querySelector(".marquee-advanced__scroll"); // Adjust the class to match your Webflow collection list
-
-    if (collectionList && sectionKPI) {
-      const visibleItems = collectionList.querySelectorAll(
-        ".marquee-advanced__item:not([style*='display: none'])"
-      );
-
-      if (visibleItems.length === 0) {
-        sectionKPI.style.display = "none"; // Hide section if no items are visible
-      } else {
-        sectionKPI.style.display = "block"; // Show section if items exist
+    const collectionList = document.querySelector(".marquee-advanced__scroll");
+  
+    if (!collectionList || !sectionKPI) return; // Exit if elements are missing
+  
+    const visibleItems = Array.from(
+      collectionList.querySelectorAll(".marquee-advanced__item")
+    ).filter((item) => item.offsetParent !== null); // More reliable check
+  
+    if (visibleItems.length === 0) {
+      sectionKPI.style.display = "none";
+      sectionKPI.setAttribute("data-theme-section", "dark"); // Set to dark
+      sectionKPI.setAttribute("data-bg-section", "white"); // Set to white
+    } else {
+      sectionKPI.style.display = "block";
+  
+      // Restore attributes if needed
+      if (!sectionKPI.hasAttribute("data-theme-section")) {
+        sectionKPI.setAttribute("data-theme-section", "light");
+      }
+      if (!sectionKPI.hasAttribute("data-bg-section")) {
+        sectionKPI.setAttribute("data-bg-section", "black");
       }
     }
   }
-
-  // Run the check initially
-  checkCollectionItems();
-
-  // Run again if filters are applied (adjust according to your filter system)
-  const observer = new MutationObserver(checkCollectionItems);
-  observer.observe(document.querySelector(".marquee-advanced__scroll"), {
-    childList: true,
-    subtree: true,
-  });
+  
+  // Run the check initially after a slight delay to ensure elements are loaded
+  setTimeout(checkCollectionItems, 100);
+  
+  // Observe changes in the collection list
+  const collectionList = document.querySelector(".marquee-advanced__scroll");
+  if (collectionList) {
+    const observer = new MutationObserver(checkCollectionItems);
+    observer.observe(collectionList, { childList: true, subtree: true });
+  }
+  
+  
+  
 }
 if (page === "assets-detail") {
   function initMarqueeScrollDirection() {
