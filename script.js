@@ -193,11 +193,6 @@ function initCheckSectionThemeScroll() {
 initCheckSectionThemeScroll();
 
 
-
-
-
-
-
 /* Menu Open */
 const menuBtn = document.querySelector(".menu-btn");
 const btnText = document.querySelector(".menu-btn .btn-text");
