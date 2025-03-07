@@ -368,6 +368,53 @@ if (page === "home") {
     heroImage.to(".home-hero-wrapper", { opacity: 0, duration: 1 }, "-=3");
   }
 
+/* Homepage Social Proof Horizontal Scroll */
+let horizontalSections = gsap.utils.toArray(".section_social-proof");
+horizontalSections.forEach((container) => {
+  let sections = container.querySelectorAll(".social-proof-item");
+  // Create the horizontal scroll animation
+  let containerAnim = gsap.to(sections, {
+    xPercent: -100 * (sections.length - 1),
+    ease: "none",
+  });
+  // Create the ScrollTrigger for the horizontal scrolling
+  ScrollTrigger.create({
+    trigger: container,
+    animation: containerAnim,
+    //pin: true,
+    scrub: 1,
+    start: "top center",
+    //end: "+=3500",
+    end: "bottom center",
+    //markers: true,
+  });
+  // Animate each h3 based on scroll progress
+  sections.forEach((section, index) => {
+    let h3 = section.querySelector(".social-proof-h3");
+    if (h3) {
+      gsap.fromTo(
+        h3,
+        { fontSize: "6.25em" },
+        {
+          fontSize: "17em",
+          scrollTrigger: {
+            containerAnimation: containerAnim,
+            trigger: section,
+            start: "center right",
+            end: "center center",
+            scrub: true,
+            // markers: {
+            //   startColor: "green",
+            //   endColor: "blue",
+            //   fontSize: "12px",
+            // },
+          },
+        }
+      );
+    }
+  });
+});
+
   // if (window.innerWidth > 991) {
   //   // Set the cursor position to follow the mouse
   //   gsap.set(".tooltip", { xPercent: -0, yPercent: -50 });
