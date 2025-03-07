@@ -7,6 +7,7 @@ window.onbeforeunload = function () {
 };
 
 /* SOUNDS */
+
 // Function to load Base64-encoded audio from a URL
 async function fetchBase64(url) {
   const response = await fetch(url);
@@ -19,8 +20,7 @@ async function fetchBase64(url) {
 // Variables
 let hoverSound = null;
 let clickSound = null;
-let soundEnabled = sessionStorage.getItem("soundEnabled") === "true";
-let firstInteraction = false; // Track first user click
+let soundEnabled = sessionStorage.getItem("soundEnabled") === "true"; // Start OFF by default
 let lottieInstance = null; // Store Lottie animation instance
 
 // Function to load sounds
@@ -42,33 +42,6 @@ async function loadSounds() {
     console.error("Error loading sounds:", error);
   }
 }
-
-// Function to enable sound & Lottie on first user interaction
-async function enableSoundOnFirstClick() {
-  if (firstInteraction) return;
-  firstInteraction = true;
-
-  if (!hoverSound || !clickSound) {
-    await loadSounds();
-  }
-
-  soundEnabled = true;
-  sessionStorage.setItem("soundEnabled", "true");
-  console.log("✅ Sound Activated on First Click!");
-
-  hoverSound.play().catch(() => {}); 
-  clickSound.play().catch(() => {}); 
-
-  // Play Lottie animation immediately when sound is activated
-  if (lottieInstance) {
-    lottieInstance.goToAndPlay(0, true);
-  }
-
-  document.removeEventListener("click", enableSoundOnFirstClick);
-}
-
-// Attach listener for first user interaction
-document.addEventListener("click", enableSoundOnFirstClick, { once: true });
 
 // Function to play hover sounds
 function playHoverSound() {
@@ -94,7 +67,6 @@ function checkAndInit() {
   const clickElements = document.querySelectorAll("[click-sound]");
 
   if (soundBtn && soundIcon && hoverElements.length > 0 && clickElements.length > 0) {
-
     // Load sounds in the background
     loadSounds();
 
@@ -133,7 +105,7 @@ const interval = setInterval(() => {
     clearInterval(interval);
   }
 }, 100);
-  
+
 // Function to update the sound toggle button & Lottie animation
 function updateButtonState(button, enabled) {
   if (enabled) {
@@ -144,6 +116,7 @@ function updateButtonState(button, enabled) {
     if (lottieInstance) lottieInstance.goToAndStop(0, true);
   }
 }
+
 
 
 
@@ -347,41 +320,6 @@ document.querySelectorAll("[data-parallax-container]").forEach((container) => {
   }
 });
 
-/* Quick Links Reveal */
-// gsap.to(".quick-item", {
-//   y: "3em",
-//   duration: 0.3,
-//   stagger: 0.1,
-//   ease: "power2.in",
-//   scrollTrigger: {
-//     trigger: ".section_quick-links",
-//     start: "top 75%",
-//     end: "bottom 75%",
-//     onComplete: () => ScrollTrigger.refresh(),
-//   },
-// });
-
-// Select all quick items
-// const quickItems = document.querySelectorAll(".quick-item");
-
-// // Loop through each item and add event listeners
-// quickItems.forEach((item) => {
-//   item.addEventListener("mouseenter", () => {
-//     gsap.to(item, {
-//       y: "0em",
-//       duration: 0.3,
-//       ease: "power2.in",
-//     });
-//   });
-
-//   item.addEventListener("mouseleave", () => {
-//     gsap.to(item, {
-//       y: "3em",
-//       duration: 0.3,
-//       ease: "power2.out",
-//     });
-//   });
-// });
 
 /* Footer Logo Reveal */
 gsap.fromTo(
@@ -398,7 +336,8 @@ gsap.fromTo(
       scrub: 1,
     },
   }
-);
+);  
+
 
 /* ------------- END OF ALL -------------- */
 
@@ -429,34 +368,34 @@ if (page === "home") {
     heroImage.to(".home-hero-wrapper", { opacity: 0, duration: 1 }, "-=3");
   }
 
-  if (window.innerWidth > 991) {
-    // Set the cursor position to follow the mouse
-    gsap.set(".tooltip", { xPercent: -0, yPercent: -50 });
+  // if (window.innerWidth > 991) {
+  //   // Set the cursor position to follow the mouse
+  //   gsap.set(".tooltip", { xPercent: -0, yPercent: -50 });
 
-    let cursorX = gsap.quickTo(".tooltip", "x", {
-      duration: 0.5,
-      ease: "power2",
-    });
-    let cursorY = gsap.quickTo(".tooltip", "y", {
-      duration: 0.5,
-      ease: "power2",
-    });
+  //   let cursorX = gsap.quickTo(".tooltip", "x", {
+  //     duration: 0.5,
+  //     ease: "power2",
+  //   });
+  //   let cursorY = gsap.quickTo(".tooltip", "y", {
+  //     duration: 0.5,
+  //     ease: "power2",
+  //   });
 
-    // Update cursor position on mouse movement
-    window.addEventListener("mousemove", (e) => {
-      cursorX(e.clientX);
-      cursorY(e.clientY);
-    });
+  //   // Update cursor position on mouse movement
+  //   window.addEventListener("mousemove", (e) => {
+  //     cursorX(e.clientX);
+  //     cursorY(e.clientY);
+  //   });
 
-    // Ensure cursor is always visible
-    const cursor = document.querySelector(".tooltip");
-    cursor.style.display = "block";
+  //   // Ensure cursor is always visible
+  //   const cursor = document.querySelector(".tooltip");
+  //   cursor.style.display = "block";
 
-    // Hide cursor on click
-    window.addEventListener("click", () => {
-      cursor.style.display = "none";
-    });
-  }
+  //   // Hide cursor on click
+  //   window.addEventListener("click", () => {
+  //     cursor.style.display = "none";
+  //   });
+  // }
 
   function initMarqueeScrollDirection() {
     document
@@ -1338,7 +1277,7 @@ if (page === "sustainability") {
         end: "+=100%",
         scrub: true,
         pin: true,
-        pinSpacing: false,
+        //pinSpacing: false,
       },
     });
 
@@ -1562,3 +1501,20 @@ if (page === "sustainability") {
   });
 }
 /* ------------- END OF CAREERS -------------- */
+
+
+if (page === "blog") {
+  const filters = document.querySelectorAll('.blog-category-field input[type="radio"]');
+  const highlight = document.querySelector('.blog-highlight');
+
+  filters.forEach(filter => {
+      filter.addEventListener('change', function() {
+          if (document.querySelector('.blog-category-field input[type="radio"]:checked')) {
+              highlight.style.display = "none"; // Hide when any filter is checked
+          } else {
+              highlight.style.display = "flex"; // Show if no filter is selected
+          }
+      });
+  });
+  
+}
