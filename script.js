@@ -918,119 +918,217 @@ if (page === "funds") {
 /* ------------- END OF FUNDS -------------- */
 
 if (page === "funds-detail") {
-  function initMarqueeScrollDirection() {
-    document
-      .querySelectorAll("[data-marquee-scroll-direction-target]")
-      .forEach((marquee) => {
-        // Query marquee elements
-        const marqueeContent = marquee.querySelector(
-          "[data-marquee-collection-target]"
-        );
-        const marqueeScroll = marquee.querySelector(
-          "[data-marquee-scroll-target]"
-        );
-        if (!marqueeContent || !marqueeScroll) return;
+  // function initMarqueeScrollDirection() {
+  //   document
+  //     .querySelectorAll("[data-marquee-scroll-direction-target]")
+  //     .forEach((marquee) => {
+  //       // Query marquee elements
+  //       const marqueeContent = marquee.querySelector(
+  //         "[data-marquee-collection-target]"
+  //       );
+  //       const marqueeScroll = marquee.querySelector(
+  //         "[data-marquee-scroll-target]"
+  //       );
+  //       if (!marqueeContent || !marqueeScroll) return;
 
-        // Get data attributes
-        const {
-          marqueeSpeed: speed,
-          marqueeDirection: direction,
-          marqueeDuplicate: duplicate,
-          marqueeScrollSpeed: scrollSpeed,
-        } = marquee.dataset;
+  //       // Get data attributes
+  //       const {
+  //         marqueeSpeed: speed,
+  //         marqueeDirection: direction,
+  //         marqueeDuplicate: duplicate,
+  //         marqueeScrollSpeed: scrollSpeed,
+  //       } = marquee.dataset;
 
-        // Convert data attributes to usable types
-        const marqueeSpeedAttr = parseFloat(speed);
-        const marqueeDirectionAttr = direction === "right" ? 1 : -1; // 1 for right, -1 for left
-        const duplicateAmount = parseInt(duplicate || 0);
-        const scrollSpeedAttr = parseFloat(scrollSpeed);
-        const speedMultiplier =
-          window.innerWidth < 479 ? 0.25 : window.innerWidth < 991 ? 0.5 : 1;
+  //       // Convert data attributes to usable types
+  //       const marqueeSpeedAttr = parseFloat(speed);
+  //       const marqueeDirectionAttr = direction === "right" ? 1 : -1; // 1 for right, -1 for left
+  //       const duplicateAmount = parseInt(duplicate || 0);
+  //       const scrollSpeedAttr = parseFloat(scrollSpeed);
+  //       const speedMultiplier =
+  //         window.innerWidth < 479 ? 0.25 : window.innerWidth < 991 ? 0.5 : 1;
 
-        let marqueeSpeed =
-          marqueeSpeedAttr *
-          (marqueeContent.offsetWidth / window.innerWidth) *
-          speedMultiplier;
+  //       let marqueeSpeed =
+  //         marqueeSpeedAttr *
+  //         (marqueeContent.offsetWidth / window.innerWidth) *
+  //         speedMultiplier;
 
-        // Precompute styles for the scroll container
-        marqueeScroll.style.marginLeft = `${scrollSpeedAttr * -1}%`;
-        marqueeScroll.style.width = `${scrollSpeedAttr * 2 + 100}%`;
+  //       // Precompute styles for the scroll container
+  //       marqueeScroll.style.marginLeft = `${scrollSpeedAttr * -1}%`;
+  //       marqueeScroll.style.width = `${scrollSpeedAttr * 2 + 100}%`;
 
-        // Duplicate marquee content
-        if (duplicateAmount > 0) {
-          const fragment = document.createDocumentFragment();
-          for (let i = 0; i < duplicateAmount; i++) {
-            fragment.appendChild(marqueeContent.cloneNode(true));
+  //       // Duplicate marquee content
+  //       if (duplicateAmount > 0) {
+  //         const fragment = document.createDocumentFragment();
+  //         for (let i = 0; i < duplicateAmount; i++) {
+  //           fragment.appendChild(marqueeContent.cloneNode(true));
+  //         }
+  //         marqueeScroll.appendChild(fragment);
+  //       }
+
+  //       // GSAP animation for marquee content
+  //       const marqueeItems = marquee.querySelectorAll(
+  //         "[data-marquee-collection-target]"
+  //       );
+  //       const animation = gsap
+  //         .to(marqueeItems, {
+  //           xPercent: -100, // Move completely out of view
+  //           repeat: -1,
+  //           duration: marqueeSpeed,
+  //           ease: "linear",
+  //         })
+  //         .totalProgress(0.5);
+
+  //       // Initialize marquee in the correct direction
+  //       gsap.set(marqueeItems, {
+  //         xPercent: marqueeDirectionAttr === 1 ? 100 : -100,
+  //       });
+  //       animation.timeScale(marqueeDirectionAttr); // Set correct direction
+  //       animation.play(); // Start animation immediately
+
+  //       // Set initial marquee status
+  //       marquee.setAttribute("data-marquee-status", "normal");
+
+  //       // ScrollTrigger logic for direction inversion
+  //       ScrollTrigger.create({
+  //         trigger: marquee,
+  //         start: "top bottom",
+  //         end: "bottom top",
+  //         onUpdate: (self) => {
+  //           const isInverted = self.direction === 1; // Scrolling down
+  //           const currentDirection = isInverted
+  //             ? -marqueeDirectionAttr
+  //             : marqueeDirectionAttr;
+
+  //           // Update animation direction and marquee status
+  //           animation.timeScale(currentDirection);
+  //           marquee.setAttribute(
+  //             "data-marquee-status",
+  //             isInverted ? "normal" : "inverted"
+  //           );
+  //         },
+  //       });
+
+  //       // Extra speed effect on scroll
+  //       const tl = gsap.timeline({
+  //         scrollTrigger: {
+  //           trigger: marquee,
+  //           start: "0% 100%",
+  //           end: "100% 0%",
+  //           scrub: 0,
+  //         },
+  //       });
+
+  //       const scrollStart =
+  //         marqueeDirectionAttr === -1 ? scrollSpeedAttr : -scrollSpeedAttr;
+  //       const scrollEnd = -scrollStart;
+
+  //       tl.fromTo(
+  //         marqueeScroll,
+  //         { x: `${scrollStart}vw` },
+  //         { x: `${scrollEnd}vw`, ease: "none" }
+  //       );
+  //     });
+  // }
+
+  // initMarqueeScrollDirection();
+
+  /* Homepage Social Proof Horizontal Scroll */
+let horizontalSections = gsap.utils.toArray(".section_social-proof");
+
+horizontalSections.forEach((container) => {
+  let sections = container.querySelectorAll(".social-proof-item");
+
+  // Create the horizontal scroll animation
+  let containerAnim = gsap.to(sections, {
+    xPercent: -100 * (sections.length - 1),
+    ease: "none",
+  });
+
+  // Create the ScrollTrigger for horizontal scrolling
+  ScrollTrigger.create({
+    trigger: container,
+    animation: containerAnim,
+    scrub: 1,
+    start: "top center",
+    end: "bottom center",
+  });
+
+  // Use matchMedia for responsive font size animation
+  let mm = gsap.matchMedia();
+
+  mm.add("(min-width: 768px)", () => {
+    // Desktop Animation
+    sections.forEach((section) => {
+      let h3 = section.querySelector(".social-proof-h3");
+      if (h3) {
+        gsap.fromTo(
+          h3,
+          { fontSize: "6.25em" },
+          {
+            fontSize: "15em",
+            scrollTrigger: {
+              containerAnimation: containerAnim,
+              trigger: section,
+              start: "center right",
+              end: "center center",
+              scrub: true,
+            },
           }
-          marqueeScroll.appendChild(fragment);
-        }
-
-        // GSAP animation for marquee content
-        const marqueeItems = marquee.querySelectorAll(
-          "[data-marquee-collection-target]"
         );
-        const animation = gsap
-          .to(marqueeItems, {
-            xPercent: -100, // Move completely out of view
-            repeat: -1,
-            duration: marqueeSpeed,
-            ease: "linear",
-          })
-          .totalProgress(0.5);
+      }
+    });
+  });
 
-        // Initialize marquee in the correct direction
-        gsap.set(marqueeItems, {
-          xPercent: marqueeDirectionAttr === 1 ? 100 : -100,
-        });
-        animation.timeScale(marqueeDirectionAttr); // Set correct direction
-        animation.play(); // Start animation immediately
-
-        // Set initial marquee status
-        marquee.setAttribute("data-marquee-status", "normal");
-
-        // ScrollTrigger logic for direction inversion
-        ScrollTrigger.create({
-          trigger: marquee,
-          start: "top bottom",
-          end: "bottom top",
-          onUpdate: (self) => {
-            const isInverted = self.direction === 1; // Scrolling down
-            const currentDirection = isInverted
-              ? -marqueeDirectionAttr
-              : marqueeDirectionAttr;
-
-            // Update animation direction and marquee status
-            animation.timeScale(currentDirection);
-            marquee.setAttribute(
-              "data-marquee-status",
-              isInverted ? "normal" : "inverted"
-            );
-          },
-        });
-
-        // Extra speed effect on scroll
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: marquee,
-            start: "0% 100%",
-            end: "100% 0%",
-            scrub: 0,
-          },
-        });
-
-        const scrollStart =
-          marqueeDirectionAttr === -1 ? scrollSpeedAttr : -scrollSpeedAttr;
-        const scrollEnd = -scrollStart;
-
-        tl.fromTo(
-          marqueeScroll,
-          { x: `${scrollStart}vw` },
-          { x: `${scrollEnd}vw`, ease: "none" }
+  mm.add("(max-width: 767px)", () => {
+    // Mobile Animation
+    sections.forEach((section) => {
+      let h3 = section.querySelector(".social-proof-h3");
+      if (h3) {
+        gsap.fromTo(
+          h3,
+          { fontSize: "1.5em" },
+          {
+            fontSize: "4em",
+            scrollTrigger: {
+              containerAnimation: containerAnim,
+              trigger: section,
+              start: "center right",
+              end: "center center",
+              scrub: true,
+            },
+          }
         );
-      });
+      }
+    });
+  });
+});
+
+  function checkCollectionItems() {
+    const sectionKPI = document.querySelector(".section-kpi");
+    const collectionList = document.querySelector(".section_social-proof"); // Adjust the class to match your Webflow collection list
+
+    if (collectionList && sectionKPI) {
+      const visibleItems = collectionList.querySelectorAll(
+        ".social-proof-item:not([style*='display: none'])"
+      );
+
+      if (visibleItems.length === 0) {
+        sectionKPI.style.display = "none"; // Hide section if no items are visible
+      } else {
+        sectionKPI.style.display = "block"; // Show section if items exist
+      }
+    }
   }
 
-  initMarqueeScrollDirection();
+  // Run the check initially
+  checkCollectionItems();
+
+  // Run again if filters are applied (adjust according to your filter system)
+  const observer = new MutationObserver(checkCollectionItems);
+  observer.observe(document.querySelector(".section_social-proof"), {
+    childList: true,
+    subtree: true,
+  });
 
   function checkCollectionItems() {
     const sectionKPI = document.querySelector(".section-kpi");
@@ -1187,7 +1285,7 @@ if (page === "assets-detail") {
 
   // initMarqueeScrollDirection();
 
-  /* Homepage Social Proof Horizontal Scroll */
+/* Homepage Social Proof Horizontal Scroll */
 let horizontalSections = gsap.utils.toArray(".section_social-proof");
 
 horizontalSections.forEach((container) => {
