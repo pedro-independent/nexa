@@ -262,7 +262,7 @@ staggerLinks.forEach((link) => {
       yPercent: 0,
       duration: 0.4,
       ease: "power4.inOut",
-      stagger: { each: 0.05, from: "end" },
+      stagger: { each: 0.05, from: "start" },
     });
   });
 });
@@ -739,7 +739,7 @@ if (page === "about") {
 
     card.addEventListener("mouseleave", () => {
       gsap.to(card.querySelector(".team-item-wrap"), {
-        height: "6em",
+        height: "6.2em",
         backgroundColor: "#E1E1E2",
         color: "#03020C",
         duration: 0.5,
