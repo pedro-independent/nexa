@@ -247,7 +247,7 @@ window.addEventListener("resize", function () {
 // ———— animation
 const staggerLinks = document.querySelectorAll("[stagger-link]");
 staggerLinks.forEach((link) => {
-  const letters = link.querySelectorAll("[stagger-link-text] .word");
+  const letters = link.querySelectorAll("[stagger-link-text]");
   link.addEventListener("mouseenter", function () {
     gsap.to(letters, {
       yPercent: -130,
