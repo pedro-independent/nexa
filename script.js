@@ -754,60 +754,101 @@ if (page === "about") {
       });
     });
   });
-}
-if (window.innerWidth > 991) {
-  const teamMembers = document.querySelectorAll(".team-item");
 
-  teamMembers.forEach((member, index) => {
-    if ((index + 1) % 5 === 0) {
-      // Create the special div
-      const specialDiv = document.createElement("div");
-      specialDiv.classList.add("team-item-strokes");
-
-      // Create and append 36 stroke divs
-      for (let i = 0; i < 36; i++) {
-        const strokeDiv = document.createElement("div");
-        strokeDiv.classList.add("stroke");
-        specialDiv.appendChild(strokeDiv);
+  if (window.innerWidth > 991) {
+    const teamMembers = document.querySelectorAll(".team-item");
+  
+    teamMembers.forEach((member, index) => {
+      if ((index + 1) % 5 === 0) {
+        // Create the special div
+        const specialDiv = document.createElement("div");
+        specialDiv.classList.add("team-item-strokes");
+  
+        // Create and append 36 stroke divs
+        for (let i = 0; i < 36; i++) {
+          const strokeDiv = document.createElement("div");
+          strokeDiv.classList.add("stroke");
+          specialDiv.appendChild(strokeDiv);
+        }
+  
+        // Insert after the current team member
+        member.parentNode.insertBefore(specialDiv, member.nextSibling);
+  
+        // Optional: GSAP Animation
+        gsap.from(specialDiv, {
+          opacity: 0,
+          y: 20,
+          duration: 1,
+          ease: "power2.out",
+        });
       }
-
-      // Insert after the current team member
-      member.parentNode.insertBefore(specialDiv, member.nextSibling);
-
-      // Optional: GSAP Animation
-      gsap.from(specialDiv, {
-        opacity: 0,
-        y: 20,
-        duration: 1,
-        ease: "power2.out",
+    });
+  
+    // Make strokes rotate towards cursor
+    const strokes = document.querySelectorAll(".stroke");
+  
+    const updateRotation = (e) => {
+      strokes.forEach((stroke) => {
+        const rect = stroke.getBoundingClientRect();
+        const strokeX = rect.left + rect.width / 2;
+        const strokeY = rect.bottom;
+  
+        let angle =
+          Math.atan2(e.clientY - strokeY, e.clientX - strokeX) * (180 / Math.PI);
+  
+        let currentRotation = gsap.getProperty(stroke, "rotation");
+        let delta = ((angle - currentRotation + 540) % 360) - 180;
+  
+        gsap.to(stroke, {
+          rotation: currentRotation + delta,
+          duration: 0.5,
+          ease: "power2.out",
+        });
       });
-    }
+    };
+    window.addEventListener("mousemove", updateRotation);
+  }
+
+// Partners Marquee
+function initCSSMarquee() {
+  const pixelsPerSecond = 75; // Set the marquee speed (pixels per second)
+  const marquees = document.querySelectorAll('[data-css-marquee]');
+  
+  // Duplicate each [data-css-marquee-list] element inside its container
+  marquees.forEach(marquee => {
+    marquee.querySelectorAll('[data-css-marquee-list]').forEach(list => {
+      const duplicate = list.cloneNode(true);
+      marquee.appendChild(duplicate);
+    });
   });
 
-  // Make strokes rotate towards cursor
-  const strokes = document.querySelectorAll(".stroke");
-
-  const updateRotation = (e) => {
-    strokes.forEach((stroke) => {
-      const rect = stroke.getBoundingClientRect();
-      const strokeX = rect.left + rect.width / 2;
-      const strokeY = rect.bottom;
-
-      let angle =
-        Math.atan2(e.clientY - strokeY, e.clientX - strokeX) * (180 / Math.PI);
-
-      let currentRotation = gsap.getProperty(stroke, "rotation");
-      let delta = ((angle - currentRotation + 540) % 360) - 180;
-
-      gsap.to(stroke, {
-        rotation: currentRotation + delta,
-        duration: 0.5,
-        ease: "power2.out",
-      });
+  // Create an IntersectionObserver to check if the marquee container is in view
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      entry.target.querySelectorAll('[data-css-marquee-list]').forEach(list => 
+        list.style.animationPlayState = entry.isIntersecting ? 'running' : 'paused'
+      );
     });
-  };
-  window.addEventListener("mousemove", updateRotation);
+  }, { threshold: 0 });
+  
+  // Calculate the width and set the animation duration accordingly
+  marquees.forEach(marquee => {
+    marquee.querySelectorAll('[data-css-marquee-list]').forEach(list => {
+      list.style.animationDuration = (list.offsetWidth / pixelsPerSecond) + 's';
+      list.style.animationPlayState = 'paused';
+    });
+    observer.observe(marquee);
+  });
 }
+
+// Initialize CSS Marquee
+
+  initCSSMarquee();
+
+
+}
+
+
 
 /* ------------- END OF ABOUT -------------- */
 
