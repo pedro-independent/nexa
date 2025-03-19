@@ -251,7 +251,7 @@ staggerLinks.forEach((link) => {
   link.addEventListener("mouseenter", function () {
     gsap.to(letters, {
       yPercent: -130,
-      duration: 0.5,
+      duration: 0.3,
       ease: "power4.inOut",
       stagger: { each: 0.05, from: "start" },
       overwrite: true,
@@ -260,7 +260,7 @@ staggerLinks.forEach((link) => {
   link.addEventListener("mouseleave", function () {
     gsap.to(letters, {
       yPercent: 0,
-      duration: 0.4,
+      duration: 0.3,
       ease: "power4.inOut",
       stagger: { each: 0.05, from: "start" },
     });
