@@ -399,7 +399,7 @@ horizontalSections.forEach((container) => {
           h3,
           { fontSize: "6.25em" },
           {
-            fontSize: "15em",
+            fontSize: "12em",
             scrollTrigger: {
               containerAnimation: containerAnim,
               trigger: section,
@@ -1106,7 +1106,7 @@ horizontalSections.forEach((container) => {
           h3,
           { fontSize: "6.25em" },
           {
-            fontSize: "15em",
+            fontSize: "12em",
             scrollTrigger: {
               containerAnimation: containerAnim,
               trigger: section,
@@ -1359,7 +1359,7 @@ horizontalSections.forEach((container) => {
           h3,
           { fontSize: "6.25em" },
           {
-            fontSize: "15em",
+            fontSize: "12em",
             scrollTrigger: {
               containerAnimation: containerAnim,
               trigger: section,
