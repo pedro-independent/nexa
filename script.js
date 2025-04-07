@@ -1426,19 +1426,30 @@ horizontalSections.forEach((container) => {
 }
 
 if (page === "assets") {
+
+  const items = document.querySelectorAll('.assets-item');
+
+  items.forEach((item, index) => {
+    const baseTop = 10; // 10%
+    const increment = 5; // 5% per item
+    const top = baseTop + index * increment;
+    item.style.top = `${top}%`;
+  });
+  
+  
+
   const stickyCards = () => {
     const panels = Array.from(document.querySelectorAll(".assets-item"));
 
     panels.forEach((panel, index) => {
       const isLast = index === panels.length - 1;
 
-      // Skip animation for the last panel
       if (!isLast) {
         gsap
           .timeline({
             scrollTrigger: {
               trigger: panel,
-              start: `top ${10 + index * 15}%`, // Staggered start
+              start: `top ${10 + index * 15}%`,
               scrub: 1,
               //markers: true,
             },
@@ -1449,7 +1460,7 @@ if (page === "assets") {
               ease: "none",
               startAt: { filter: "blur(0px)", opacity: 1 },
               filter: "blur(4px)",
-              opacity: 0,
+              //opacity: 0,
               scale: 0.8,
             },
             "<"
@@ -1462,40 +1473,6 @@ if (page === "assets") {
 
 if (page === "assets-detail") {
   if (window.innerWidth > 991) {
-    // /* Custom Cursor */
-
-    // // Set the cursor position to follow the mouse
-    // gsap.set(".cursor", { xPercent: -50, yPercent: -50 });
-
-    // let cursorX = gsap.quickTo(".cursor", "x", {
-    //   duration: 0.5,
-    //   ease: "power2",
-    // });
-    // let cursorY = gsap.quickTo(".cursor", "y", {
-    //   duration: 0.5,
-    //   ease: "power2",
-    // });
-
-    // window.addEventListener("mousemove", (e) => {
-    //   cursorX(e.clientX);
-    //   cursorY(e.clientY);
-    // });
-
-    // // Select all elements with the [data-cursor] attribute
-    // let links = document.querySelectorAll("[data-cursor]");
-    // let cursorText = document.querySelector(".cursor p"); // Select the <p> inside .cursor
-
-    // links.forEach((link) => {
-    //   let text = link.getAttribute("data-cursor"); // Get the attribute value
-
-    //   link.addEventListener("mouseenter", () => {
-    //     cursorText.textContent = text; // Update the <p> text inside .cursor
-    //   });
-
-    //   link.addEventListener("mouseleave", () => {
-    //     cursorText.textContent = ""; // Reset the text when the mouse leaves
-    //   });
-    // });
   }
 }
 
