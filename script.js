@@ -923,19 +923,27 @@ if (page === "funds") {
     });
   });
 
+  const items = document.querySelectorAll('.funds-item');
+
+  items.forEach((item, index) => {
+    const baseTop = 10; // 10%
+    const increment = 5; // 5% per item
+    const top = baseTop + index * increment;
+    item.style.top = `${top}%`;
+  });
+  
   const stickyCards = () => {
     const panels = Array.from(document.querySelectorAll(".funds-item"));
 
     panels.forEach((panel, index) => {
       const isLast = index === panels.length - 1;
 
-      // Skip animation for the last panel
       if (!isLast) {
         gsap
           .timeline({
             scrollTrigger: {
               trigger: panel,
-              start: `top ${10 + index * 15}%`, // Staggered start
+              start: `top ${10 + index * 15}%`,
               scrub: 1,
               //markers: true,
             },
@@ -946,7 +954,7 @@ if (page === "funds") {
               ease: "none",
               startAt: { filter: "blur(0px)", opacity: 1 },
               filter: "blur(4px)",
-              opacity: 0,
+              //opacity: 0,
               scale: 0.8,
             },
             "<"
@@ -1436,8 +1444,6 @@ if (page === "assets") {
     item.style.top = `${top}%`;
   });
   
-  
-
   const stickyCards = () => {
     const panels = Array.from(document.querySelectorAll(".assets-item"));
 
