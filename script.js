@@ -616,99 +616,166 @@ horizontalSections.forEach((container) => {
       });
     });
 
-  /* Values Scroll Animation */
-  if (window.innerWidth > 991) {
-    gsap.set(".home-values-item-sub-wrap", {
-      height: 0,
-      opacity: 0,
-      margin: 0,
-    });
+  /* Our Values Animation */
 
-    let homeValues = gsap.timeline({
-      scrollTrigger: {
-        trigger: ".section_home-values",
-        start: "top top",
-        end: "+=100%",
-        scrub: true,
-        pin: true,
-        pinSpacing: false,
-        //markers: true
-      },
-    });
-
-    const items = document.querySelectorAll(".home-values-item-wrap");
-    const subItems = document.querySelectorAll(".home-values-item-sub-wrap");
-    const headers = document.querySelectorAll(".values-h3");
-
-    items.forEach((item, index) => {
-      if (index > 0) {
-        homeValues.to(
-          subItems[index - 1],
-          {
-            height: 0,
-            opacity: 0,
-            marginTop: 0,
-            duration: 1,
-            ease: "power2.inOut",
-          },
-          ">"
-        );
-
-        homeValues.to(
-          items[index - 1],
-          {
-            color: "#03020C",
-            duration: 0.5,
-            ease: "power2.out",
-          },
-          "<"
-        );
-
-        homeValues.to(
-          headers[index - 1],
-          {
-            color: "#03020C",
-            duration: 0.5,
-            ease: "power2.out",
-          },
-          "<"
-        );
+  function initAccordionCSS(mode) {
+    document.querySelectorAll('[data-accordion-css-init]').forEach((accordion) => {
+      // Remove existing event listeners by cloning the node
+      const newAccordion = accordion.cloneNode(true);
+      accordion.parentNode.replaceChild(newAccordion, accordion);
+  
+      const closeSiblings = newAccordion.getAttribute('data-accordion-close-siblings') === 'true';
+  
+      if (mode === 'hover') {
+        newAccordion.addEventListener('mouseenter', (event) => {
+          const toggle = event.target.closest('[data-accordion-toggle]');
+          if (!toggle) return;
+  
+          const singleAccordion = toggle.closest('[data-accordion-status]');
+          if (!singleAccordion) return;
+  
+          const isActive = singleAccordion.getAttribute('data-accordion-status') === 'active';
+          if (isActive) return;
+  
+          singleAccordion.setAttribute('data-accordion-status', 'active');
+  
+          if (closeSiblings) {
+            newAccordion.querySelectorAll('[data-accordion-status="active"]').forEach((sibling) => {
+              if (sibling !== singleAccordion) sibling.setAttribute('data-accordion-status', 'not-active');
+            });
+          }
+        }, true);
+      } else if (mode === 'click') {
+        newAccordion.addEventListener('click', (event) => {
+          const toggle = event.target.closest('[data-accordion-toggle]');
+          if (!toggle) return;
+  
+          const singleAccordion = toggle.closest('[data-accordion-status]');
+          if (!singleAccordion) return;
+  
+          const isActive = singleAccordion.getAttribute('data-accordion-status') === 'active';
+          singleAccordion.setAttribute('data-accordion-status', isActive ? 'not-active' : 'active');
+  
+          if (closeSiblings && !isActive) {
+            newAccordion.querySelectorAll('[data-accordion-status="active"]').forEach((sibling) => {
+              if (sibling !== singleAccordion) sibling.setAttribute('data-accordion-status', 'not-active');
+            });
+          }
+        });
       }
-
-      homeValues.to(
-        headers[index],
-        {
-          color: "#C85204",
-          duration: 0.5,
-          ease: "power2.out",
-        },
-        "<"
-      );
-
-      homeValues.to(
-        item,
-        {
-          color: "#C85204",
-          duration: 0.5,
-          ease: "power2.out",
-        },
-        "<"
-      );
-
-      homeValues.to(
-        subItems[index],
-        {
-          height: "auto",
-          opacity: 1,
-          marginTop: "2em",
-          duration: 1,
-          ease: "power2.inOut",
-          onComplete: () => ScrollTrigger.refresh(),
-        },
-        "<"
-      );
     });
   }
+  
+  // Helper to determine and apply correct mode
+  function setupAccordionByDevice() {
+    if (window.innerWidth > 991) {
+      initAccordionCSS('hover');
+    } else {
+      initAccordionCSS('click');
+    }
+  }
+  
+  // Initial run
+  setupAccordionByDevice();
+  
+  // Optional: update on window resize
+  window.addEventListener('resize', () => {
+    setupAccordionByDevice();
+  });
+  
+
+  // if (window.innerWidth > 991) {
+  //   gsap.set(".home-values-item-sub-wrap", {
+  //     height: 0,
+  //     opacity: 0,
+  //     margin: 0,
+  //   });
+
+  //   let homeValues = gsap.timeline({
+  //     scrollTrigger: {
+  //       trigger: ".section_home-values",
+  //       start: "top top",
+  //       end: "+=100%",
+  //       scrub: true,
+  //       pin: true,
+  //       pinSpacing: false,
+  //       //markers: true
+  //     },
+  //   });
+
+  //   const items = document.querySelectorAll(".home-values-item-wrap");
+  //   const subItems = document.querySelectorAll(".home-values-item-sub-wrap");
+  //   const headers = document.querySelectorAll(".values-h3");
+
+  //   items.forEach((item, index) => {
+  //     if (index > 0) {
+  //       homeValues.to(
+  //         subItems[index - 1],
+  //         {
+  //           height: 0,
+  //           opacity: 0,
+  //           marginTop: 0,
+  //           duration: 1,
+  //           ease: "power2.inOut",
+  //         },
+  //         ">"
+  //       );
+
+  //       homeValues.to(
+  //         items[index - 1],
+  //         {
+  //           color: "#03020C",
+  //           duration: 0.5,
+  //           ease: "power2.out",
+  //         },
+  //         "<"
+  //       );
+
+  //       homeValues.to(
+  //         headers[index - 1],
+  //         {
+  //           color: "#03020C",
+  //           duration: 0.5,
+  //           ease: "power2.out",
+  //         },
+  //         "<"
+  //       );
+  //     }
+
+  //     homeValues.to(
+  //       headers[index],
+  //       {
+  //         color: "#C85204",
+  //         duration: 0.5,
+  //         ease: "power2.out",
+  //       },
+  //       "<"
+  //     );
+
+  //     homeValues.to(
+  //       item,
+  //       {
+  //         color: "#C85204",
+  //         duration: 0.5,
+  //         ease: "power2.out",
+  //       },
+  //       "<"
+  //     );
+
+  //     homeValues.to(
+  //       subItems[index],
+  //       {
+  //         height: "auto",
+  //         opacity: 1,
+  //         marginTop: "2em",
+  //         duration: 1,
+  //         ease: "power2.inOut",
+  //         onComplete: () => ScrollTrigger.refresh(),
+  //       },
+  //       "<"
+  //     );
+  //   });
+  // }
 }
 
 /* ------------- END OF HOME -------------- */
