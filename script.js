@@ -370,36 +370,43 @@ if (page === "home") {
 let horizontalSections = gsap.utils.toArray(".section_social-proof");
 
 horizontalSections.forEach((container) => {
-  let sections = container.querySelectorAll(".social-proof-item");
+  const sections = container.querySelectorAll(".social-proof-item");
 
-  // Create the horizontal scroll animation
-  let containerAnim = gsap.to(sections, {
-    xPercent: -130 * (sections.length - 1),
+  // Set up horizontal scrolling animation
+  const containerAnim = gsap.to(sections, {
+    xPercent: -150 * (sections.length - 1),
     ease: "none",
   });
 
-  // Create the ScrollTrigger for horizontal scrolling
   ScrollTrigger.create({
     trigger: container,
     animation: containerAnim,
-    scrub: 1,
+    scrub: 2,
     start: "top center",
     end: "bottom center",
   });
 
-  // Use matchMedia for responsive font size animation
-  let mm = gsap.matchMedia();
+  // Set up responsive scaling
+  const mm = gsap.matchMedia();
 
-  mm.add("(min-width: 768px)", () => {
-    // Desktop Animation
-    sections.forEach((section) => {
-      let h3 = section.querySelector(".social-proof-h3");
-      if (h3) {
+  mm.add(
+    {
+      isDesktop: "(min-width: 768px)",
+      isMobile: "(max-width: 767px)",
+    },
+    (context) => {
+      const { isDesktop, isMobile } = context.conditions;
+
+      sections.forEach((section) => {
+        const h3 = section.querySelector(".social-proof-h3");
+        if (!h3) return;
+
         gsap.fromTo(
           h3,
-          { fontSize: "6.25em" },
+          { scale: 1 },
           {
-            fontSize: "12em",
+            scale: isDesktop ? 1.75 : 1.25,
+            transformOrigin: "left bottom",
             scrollTrigger: {
               containerAnimation: containerAnim,
               trigger: section,
@@ -409,32 +416,9 @@ horizontalSections.forEach((container) => {
             },
           }
         );
-      }
-    });
-  });
-
-  mm.add("(max-width: 767px)", () => {
-    // Mobile Animation
-    sections.forEach((section) => {
-      let h3 = section.querySelector(".social-proof-h3");
-      if (h3) {
-        gsap.fromTo(
-          h3,
-          { fontSize: "1.5em" },
-          {
-            fontSize: "4em",
-            scrollTrigger: {
-              containerAnimation: containerAnim,
-              trigger: section,
-              start: "center right",
-              end: "center center",
-              scrub: true,
-            },
-          }
-        );
-      }
-    });
-  });
+      });
+    }
+  );
 });
 
 
