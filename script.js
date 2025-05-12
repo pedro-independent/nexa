@@ -374,7 +374,7 @@ horizontalSections.forEach((container) => {
 
   // Create the horizontal scroll animation
   let containerAnim = gsap.to(sections, {
-    xPercent: -100 * (sections.length - 1),
+    xPercent: -130 * (sections.length - 1),
     ease: "none",
   });
 
