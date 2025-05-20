@@ -899,7 +899,26 @@ horizontalSections.forEach((container) => {
     observer.observe(collectionList, { childList: true, subtree: true });
   }
   
-  
+  // Hide report list if no items in cms
+    const reportCms = document.querySelector(".fund-report-wrap");
+    const reportItems = reportCms?.querySelectorAll(".w-dyn-item");
+
+    if (!reportItems || reportItems.length === 0) {
+      reportCms.style.display = "none";
+    }
+
+  const reportLastCms = document.querySelector(".cta-block-list-wrap");
+  const reportLastItems = reportLastCms?.querySelectorAll(".w-dyn-item");
+
+  if (!reportItems || reportLastItems.length === 0) {
+    const reportLastSection = document.querySelector(".section_funds-reports");
+    if (reportLastSection) {
+      reportLastSection.style.display = "none";
+    }
+  }
+
+
+
   
 }
 if (page === "assets-detail") {
